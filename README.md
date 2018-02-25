@@ -11,7 +11,7 @@ as code to load them isn't there yet. When future update enable loading of .asse
 The partcher also give priority to the files loaded from Mod folder over those loaded from .arc files, meaning if two files have the same name
 the one from Mow will beloaded.
 
-Folder structure inse Mod folder is irrelevant, so as long it's inside Mod it's going to work.
+Folder structure inside Mod folder is irrelevant, so as long it's inside Mod it's going to work.
 
 Pre-requisites:
 [Sybaris](https://ux.getuploader.com/cm3d2_e/download/317)
