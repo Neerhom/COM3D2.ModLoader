@@ -13,5 +13,12 @@ the one from Mow will beloaded.
 
 Folder structure inse Mod folder is irrelevant, so as long it's inside Mod it's going to work.
 
+Pre-requisites:
+[Sybaris](https://ux.getuploader.com/cm3d2_e/download/317)
+[Mono.Cecil.Inject](https://github.com/denikson/Mono.Cecil.Inject/releases)
+
+Installation:
+Place Mono.Cecil.Inject into Sybaris/Loader
+Place COM3D2.ModLoader.Patcher and COM3D2.ModLoader.Managed inside Sybaris/Gamedata.
 
 The initial version is written by [denikson](https://github.com/denikson) and i'm left with maintenance.
