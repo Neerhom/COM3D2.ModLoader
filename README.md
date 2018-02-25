@@ -19,6 +19,7 @@ Pre-requisites:
 
 Installation:
 Place Mono.Cecil.Inject into Sybaris/Loader
+
 Place COM3D2.ModLoader.Patcher and COM3D2.ModLoader.Managed inside Sybaris/Loader
 
 The initial version is written by [denikson](https://github.com/denikson) and i'm left with maintenance.
