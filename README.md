@@ -1,5 +1,5 @@
 # COM3D2.ModLoader
-Sybarys patcher for GameData-like functionality.
+Sybaris patcher for GameData-like functionality.
 
 
 Since Sybaris currently isn't able to load any mods via Sybaris/Gamedat folder, this patcher was made to fix that, by giving such
