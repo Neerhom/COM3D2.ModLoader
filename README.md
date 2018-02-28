@@ -7,13 +7,12 @@ functionaly to Mod folder.
 
 .ks files or scripts, are handled by the game in a different manner, which has not been changed for COM3D2, as such they can be loaded from Sybaris/Gamedata
 
-This enable loading of any files that game would call from it's .arc files from Mod folder, with exception of .asset_bg files,
-as code to load them isn't there yet. When future update enables loading of .asset_bg files, expect an update to allow loading of them as well. 
+This enable loading of any files that game would call from it's .arc files from Mod folder.
 
-The patcher also gives priority to the files loaded from Mod folder over those loaded from .arc files, meaning if two files have the same name
-the one from Mod will be loaded.
+The patcher also gives priority to the files loaded from Mod folder over those loaded from .arc files, meaning if two files have the same name the one from Mod will be loaded.
 
-Folder structure inside Mod folder is irrelevant, so as long it's inside Mod it's going to work.
+Folder structure inside Mod folder is irrelevant, so as long it's inside Mod it's going to work. The exception are .asset_bg files,
+which must be placed inside Mod/bg folder.
 
 Pre-requisites:
 [Sybaris](https://ux.getuploader.com/cm3d2_e/download/317)
