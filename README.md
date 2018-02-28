@@ -2,7 +2,7 @@
 Sybaris patcher for GameData-like functionality.
 
 Since Sybaris currently isn't able to load any mods via Sybaris/Gamedata folder, this patcher was made to fix that, by giving such
-functionallity to Mod folder.
+functionality to Mod folder.
 
 .ks files or scripts, are handled by the game in a different manner, which has not been changed for COM3D2, as such they can be loaded from Sybaris/Gamedata
 
