@@ -1,4 +1,5 @@
 Required assemblies:
+UnityEngine.dll (COM3D2folder/COM3D2x64_Data/Managed)
 
 Assembly-CSharp.dll (COM3D2.ModLoader.Managed required pre-patched Assembly-CSharp.dll)
 
