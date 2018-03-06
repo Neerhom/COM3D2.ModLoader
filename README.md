@@ -18,6 +18,8 @@ It also enables appending of data to photo_bg_list.nei and phot_bg_object_list.n
 See more details on [wiki page](https://github.com/Neerhom/COM3D2.ModLoader/wiki/.asset_bg-files-and-what-to-do-with-them)
 
 Because of this feature, ModLoader also comes with WORKING mirror props for Photo Mode!
+Do note, that I have no claims over the scripts resposible for reflections, as it was a free asset from Unity store, which is no longer avaialbe. If you wish to use this script, simply decomplie the .dll files inside UnityInjector.
+
 
 
 Pre-requisites:
@@ -29,6 +31,6 @@ Place Mono.Cecil.Inject into Sybaris/Loader
 
 Place COM3D2.ModLoader.Patcher and COM3D2.ModLoader.Managed inside Sybaris/Loader
 
-To enable Mirror Props put contesnts of Mod Folder along game's exe file, and Contents of UnityInjector, into Sybaris/Plugins/UnityInjector 
+To enable Mirror Props put contents of Mod Folder along game's exe file, and Contents of UnityInjector, into Sybaris/Plugins/UnityInjector 
 
 The initial version is written by [denikson](https://github.com/denikson) and i'm left with maintenance.
