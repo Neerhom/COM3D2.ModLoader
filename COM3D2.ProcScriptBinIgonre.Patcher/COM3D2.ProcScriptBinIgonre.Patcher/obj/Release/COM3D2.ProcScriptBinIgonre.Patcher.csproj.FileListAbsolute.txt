@@ -1,7 +1,0 @@
-E:\COM3D2Project\COM3D2.ProcScriptBinIgonre\COM3D2.ProcScriptBinIgonre.Patcher\COM3D2.ProcScriptBinIgonre.Patcher\bin\Release\COM3D2.ProcScriptBinIgonre.Patcher.dll
-E:\COM3D2Project\COM3D2.ProcScriptBinIgonre\COM3D2.ProcScriptBinIgonre.Patcher\COM3D2.ProcScriptBinIgonre.Patcher\bin\Release\COM3D2.ProcScriptBinIgonre.Patcher.pdb
-E:\COM3D2Project\COM3D2.ProcScriptBinIgonre\COM3D2.ProcScriptBinIgonre.Patcher\COM3D2.ProcScriptBinIgonre.Patcher\bin\Release\Mono.Cecil.dll
-E:\COM3D2Project\COM3D2.ProcScriptBinIgonre\COM3D2.ProcScriptBinIgonre.Patcher\COM3D2.ProcScriptBinIgonre.Patcher\bin\Release\Mono.Cecil.Inject.dll
-E:\COM3D2Project\COM3D2.ProcScriptBinIgonre\COM3D2.ProcScriptBinIgonre.Patcher\COM3D2.ProcScriptBinIgonre.Patcher\obj\Release\COM3D2.ProcScriptBinIgonre.Patcher.csprojResolveAssemblyReference.cache
-E:\COM3D2Project\COM3D2.ProcScriptBinIgonre\COM3D2.ProcScriptBinIgonre.Patcher\COM3D2.ProcScriptBinIgonre.Patcher\obj\Release\COM3D2.ProcScriptBinIgonre.Patcher.dll
-E:\COM3D2Project\COM3D2.ProcScriptBinIgonre\COM3D2.ProcScriptBinIgonre.Patcher\COM3D2.ProcScriptBinIgonre.Patcher\obj\Release\COM3D2.ProcScriptBinIgonre.Patcher.pdb
