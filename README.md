@@ -7,8 +7,7 @@ Since Sybaris currently isn't able to load any mods via Sybaris/Gamedata folder,
 
 This enables loading of any files that game would call from it's .arc files from Mod folder, with exception of aforementioned .ks files.
 
-I'm aware that [Sybaris 2.0](https://ux.getuploader.com/cm3d2_j/download/66#Qlq6Jr0.twitter_tweet_count_no_m) is a thing,
-however, it doesn't run for me (Win7x64, with x64 opengl32.dll) and crashes COM. So if the patching porcess were to change (luckily it's the same as for Sybaris, according to readme) I can't provide any support for it.
+
 
 The patcher also gives priority to the files loaded from Mod folder over those loaded from .arc files, meaning if two files have the same name the one from Mod will be loaded.
 
@@ -28,16 +27,16 @@ Do note, that I have no claims over the scripts resposible for reflections, as i
 
 
 Pre-requisites:
-[Sybaris](https://ux.getuploader.com/cm3d2_e/download/317)
+[Sybaris](https://ux.getuploader.com/cm3d2_e/download/317) or [Sybaris 2.1](https://ux.getuploader.com/cm3d2_j/download/68) 
 [Mono.Cecil.Inject](https://github.com/denikson/Mono.Cecil.Inject/releases)
 
 Installation:
 Place Mono.Cecil.Inject into Sybaris/Loader
 
-Place COM3D2.ModLoader.Patcher and COM3D2.ModLoader.Managed inside Sybaris/Loader
+Place contents of Loader inside Sybaris/Loader
 
-For Sybaris 2.0 the installation is that same, but you'd placing files into Sybaris folder instead. 
+For Sybaris 2.1 the installation is that same, but you'd placing files into Sybaris folder instead. 
 
-To enable Mirror Props put contents of Mod Folder along game's exe file, and Contents of UnityInjector, into Sybaris/Plugins/UnityInjector; for Sybaris 2.0 place contents of UnityInjector into Sybaris/UnityInjector
+To enable Mirror Props put contents of Mod Folder along game's exe file, and Contents of UnityInjector, into Sybaris/Plugins/UnityInjector; for Sybaris 2.1 place contents of UnityInjector into Sybaris/UnityInjector
 
 The initial version is written by [denikson](https://github.com/denikson) and i'm left with maintenance.
