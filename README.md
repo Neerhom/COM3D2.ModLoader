@@ -8,7 +8,7 @@ Since Sybaris currently isn't able to load any mods via Sybaris/Gamedata folder,
 This enables loading of any files that game would call from it's .arc files from Mod folder, with exception of aforementioned .ks files.
 
 I'm aware that [Sybaris 2.0](https://ux.getuploader.com/cm3d2_j/download/66#Qlq6Jr0.twitter_tweet_count_no_m) is a thing,
-however, because it doesn't run for me (Win7x64, with x64 opengl32.dll) and crashes COM. So if the patching porcess were to change (luckily it's the same as for Sybaris, according to readme) I can't provide any support for it.
+however, it doesn't run for me (Win7x64, with x64 opengl32.dll) and crashes COM. So if the patching porcess were to change (luckily it's the same as for Sybaris, according to readme) I can't provide any support for it.
 
 The patcher also gives priority to the files loaded from Mod folder over those loaded from .arc files, meaning if two files have the same name the one from Mod will be loaded.
 
