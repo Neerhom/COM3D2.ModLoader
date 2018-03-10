@@ -1,182 +1,118 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Text;
+using Mono.Cecil;
 using Mono.Cecil.Inject;
 using Mono.Cecil.Cil;
-using Mono.Cecil;
 
-namespace COM3D2.ProcScriptBinIgnore.Patcher
+namespace COM3D2.ModLoader.Patcher
 {
-    public static class ProcScriptBinIgonre
+    public static class ModLoaderPatcher
     {
-
-
-
         public static readonly string[] TargetAssemblyNames = { "Assembly-CSharp.dll" };
+        private const string HOOK_NAME = "COM3D2.ModLoader.Managed";
 
-        //cut a number of instructions starting at and including specified position
-        public static void InstCutter(MethodDefinition method, int cutpos, int cutN)
+
+
+        public static void Patch(AssemblyDefinition assembly)
         {
+            int counter = 0;
+            string assemblyDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string hookDir = $"{HOOK_NAME}.dll";
+            AssemblyDefinition hookAssembly = AssemblyLoader.LoadAssembly(Path.Combine(assemblyDir, hookDir));
 
+            TypeDefinition gameUty = assembly.MainModule.GetType("GameUty");
+            TypeDefinition hooks = hookAssembly.MainModule.GetType($"{HOOK_NAME}.Hooks");
 
-            for (int i = 0; i < cutN; i++)
+            MethodDefinition init = gameUty.GetMethod("Init");
+            MethodDefinition swapFileSystems = hooks.GetMethod("SwapFileSystems");
+
+            init.InjectWith(swapFileSystems, 2); // Patch right after the file system was initially set
+            gameUty.ChangeAccess("m_FileSystem", true, false); // Make original file system public to allow replacing
+            gameUty.ChangeAccess("m_ModFileSystem", true, false); // Make the mod file system public
+
+            // enablie nei append to PhotBGData
+            TypeDefinition PhotoBGData = assembly.MainModule.GetType("PhotoBGData");
+            PhotoBGData.ChangeAccess("bg_data_", true, false); // make public to allow hook access
+            MethodDefinition PhotoBGDatCreate = PhotoBGData.GetMethod("Create");
+            MethodDefinition PhotoBgExt = hooks.GetMethod("PhotoBGext");
+
+            for (int inst = 0; inst < PhotoBGDatCreate.Body.Instructions.Count; inst++)
+
             {
-
-                method.Body.Instructions.RemoveAt(cutpos);
-
-            }
-        }
-
-        public static void Patch ( AssemblyDefinition assembly)
-        {
-
-            // remove call to Ndebug.Assert in SceneEdit.InitMenuItemScript
-            // this thing is responsible for Maid Edit game crash
-            TypeDefinition SceneEdit = assembly.MainModule.GetType("SceneEdit");
-            MethodDefinition InitMenuItemScript = SceneEdit.GetMethod("InitMenuItemScript");
-
-            for (int inst = 0; inst < InitMenuItemScript.Body.Instructions.Count; inst++)
-            {
-
-                if (InitMenuItemScript.Body.Instructions[inst].OpCode == OpCodes.Ldstr)
-
+                if (PhotoBGDatCreate.Body.Instructions[inst].OpCode == OpCodes.Endfinally)
                 {
-                    string target = InitMenuItemScript.Body.Instructions[inst].Operand as string;
-
-                    if (target == "CM3D2_MENU")
+                    counter += 1;
+                    if (counter == 2)
                     {
-                        InstCutter(InitMenuItemScript, inst - 1, 7);
-                        break;
-
-                    }
-
-                }
-
-            }
-
-            // remove call to Ndebug.Assert in SceneEdit.InitModMenuItemScript
-            // not sure about this one, as this one is likely for .mod files, which should be headache of KISS, but whatever
-            MethodDefinition InitModMenuItemScript = SceneEdit.GetMethod("InitModMenuItemScript");
-
-            for (int inst = 0; inst < InitModMenuItemScript.Body.Instructions.Count; inst++)
-            {
-
-                if (InitModMenuItemScript.Body.Instructions[inst].OpCode == OpCodes.Ldstr)
-
-                {
-                    string target = InitModMenuItemScript.Body.Instructions[inst].Operand as string;
-
-                    if (target == "CM3D2_MOD")
-                    {
-                        InstCutter(InitModMenuItemScript, inst - 1, 7);
+                        PhotoBGDatCreate.InjectWith(PhotoBgExt, inst+1);
                         break;
                     }
-
                 }
-
             }
 
+            // enable nei append to PhotBGObjectData
+            TypeDefinition PhotoBGObjectData = assembly.MainModule.GetType("PhotoBGObjectData");
+            PhotoBGObjectData.ChangeAccess("bg_data_",true, false); // make public to allow hook access
+            MethodDefinition PhotoBobjectDataCreate = PhotoBGObjectData.GetMethod("Create");
+            MethodDefinition PhotoBGobjext = hooks.GetMethod("PhotoBGobjext");
 
+            counter = 0;
+            for (int inst = 0; inst < PhotoBobjectDataCreate.Body.Instructions.Count; inst++)
 
-            // remove call to Ndebug.Assert in ImportCM.LoadMaterial() and ImportCM.LoadTexture()
-            // Not sure if there is a point in murdering these
+            {
+                if (PhotoBobjectDataCreate.Body.Instructions[inst].OpCode == OpCodes.Endfinally)
+                {
+                    counter += 1;
+                    if (counter == 2)
+                    {
+                        PhotoBobjectDataCreate.InjectWith(PhotoBGobjext, inst + 1);
+                        break;
+                    }
+                }
+            }
+
+            // enable PhotoBGObj to use asset bundles
+
+            MethodDefinition PhotBGObj_Instantiate = PhotoBGObjectData.GetMethod("Instantiate");
+            MethodDefinition PhotBGObj_Instantiate_Ext = hooks.GetMethod("PhotBGObj_Instantiate_Ext");
+
+            for (int inst = 0; inst < PhotBGObj_Instantiate.Body.Instructions.Count; inst++)
+            {
+                if (PhotBGObj_Instantiate.Body.Instructions[inst].OpCode == OpCodes.Ret)
+                {
+                    PhotBGObj_Instantiate.InjectWith(PhotBGObj_Instantiate_Ext, codeOffset: inst-5, flags: InjectFlags.PassInvokingInstance | InjectFlags.PassLocals, localsID: new[] { 2 });
+                    break;
+                }
+            }
+            //add mod asset bundles to BgFiles
+            MethodDefinition UpdateFileSystemPath = gameUty.GetMethod("UpdateFileSystemPath");
+            MethodDefinition addbundlestobg = hooks.GetMethod("addbundlestobg");
+            counter = 0;
+            for (int inst = 0; inst < UpdateFileSystemPath.Body.Instructions.Count; inst++)
+            {
+                if (UpdateFileSystemPath.Body.Instructions[inst].OpCode == OpCodes.Blt)
+                {
+                    counter += 1;
+                    if (counter == 3)
+                    {
+                        UpdateFileSystemPath.InjectWith(addbundlestobg, codeOffset: inst + 1);
+                        break;
+                    }
+                }
+            }
+
+            // enable loading of .pmat filesfrom Mod folder
+
 
             TypeDefinition ImportCM = assembly.MainModule.GetType("ImportCM");
+            MethodDefinition ReadMaterial = ImportCM.GetMethod("ReadMaterial");
+            MethodDefinition ModPmat = hooks.GetMethod("ModPmat");
 
-            MethodDefinition LoadMaterial = ImportCM.GetMethod("LoadMaterial");
-
-
-            for (int inst = 0; inst < LoadMaterial.Body.Instructions.Count; inst++)
-            {
-
-                if (LoadMaterial.Body.Instructions[inst].OpCode == OpCodes.Ldstr)
-
-                {
-                    string target = LoadMaterial.Body.Instructions[inst].Operand as string;
-
-                    if (target == "CM3D2_MATERIAL")
-                    {
-                        InstCutter(LoadMaterial, inst +3, 5);
-                        break;
-                    }
-
-                }
-
-            }
-
-            MethodDefinition LoadTexture = ImportCM.GetMethod("LoadTexture");
-
-
-            for (int inst = 0; inst < LoadTexture.Body.Instructions.Count; inst++)
-            {
-
-                if (LoadTexture.Body.Instructions[inst].OpCode == OpCodes.Ldstr)
-
-                {
-                    string target = LoadTexture.Body.Instructions[inst].Operand as string;
-
-                    if (target == "CM3D2_TEX")
-                    {
-                        InstCutter(LoadTexture, inst + 3, 5);
-                        break;
-                    }
-
-                }
-
-            }
-
-
-
-
-            // remove call to Ndebug.Assert in Menu.ProcScriptBin
-            // Not sure if there is a point in murdering this one
-            TypeDefinition Menu = assembly.MainModule.GetType("Menu");
-            MethodDefinition ProcScriptBin = Menu.GetMethod("ProcScriptBin");
-
-            
-            for (int inst = 0; inst < ProcScriptBin.Body.Instructions.Count; inst++)
-            {
-
-                if (ProcScriptBin.Body.Instructions[inst].OpCode == OpCodes.Ldstr)
-
-                {
-                    string target = ProcScriptBin.Body.Instructions[inst].Operand as string;
-
-                    if (target == "CM3D2_MENU")
-                    {
-                        InstCutter(ProcScriptBin, inst-1, 7);
-                        break;
-                    }
-                    
-                }
-                
-            }
-
-
-            // remove call to Ndebug.Assert in Menu.ProcModScriptBin
-            // Not sure if there is a point in murdering this one
-          
-            MethodDefinition ProcModScriptBin = Menu.GetMethod("ProcModScriptBin");
-
-
-            for (int inst = 0; inst < ProcModScriptBin.Body.Instructions.Count; inst++)
-            {
-
-                if (ProcModScriptBin.Body.Instructions[inst].OpCode == OpCodes.Ldstr)
-
-                {
-                    string target = ProcModScriptBin.Body.Instructions[inst].Operand as string;
-
-                    if (target == "CM3D2_MOD")
-                    {
-                        InstCutter(ProcModScriptBin, inst - 1, 7);
-                        break;
-                    }
-
-                }
-
-            }
-
-
+            ReadMaterial.InjectWith(ModPmat, codeOffset: 9, flags: InjectFlags.PassLocals, localsID: new[] { 0 });
 
         }
-
     }
 }
