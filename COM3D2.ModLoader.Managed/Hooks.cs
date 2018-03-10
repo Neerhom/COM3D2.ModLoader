@@ -148,6 +148,29 @@ namespace COM3D2.ModLoader.Managed
             }
            
         }
-    
+
+
+        public static void ModPmat(ref string[] list)
+        {
+           
+
+            string[] listmod = GameUty.m_ModFileSystem.GetFileListAtExtension(".pmat");
+
+           
+            if (list != null && list.Length > 0)
+            {
+                List<string> convertlist = list.ToList();
+                for (int i = 0; i < listmod.Length; i++)
+                {
+                    convertlist.Add(listmod[i]);
+                }
+
+                list = convertlist.ToArray();
+            }
+
+           
+
+        }
+
     }
 }
