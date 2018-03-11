@@ -5,9 +5,7 @@ Since Sybaris currently isn't able to load any mods via Sybaris/Gamedata folder,
 
 .ks files or scripts, are handled by the game in a different manner, which has not been changed for COM3D2, as such they can be loaded from Sybaris/Gamedata
 
-This enables loading of any files that game would call from it's .arc files from Mod folder, with exception of aforementioned .ks files.
-
-
+This enables loading of any files that game would call from it's .arc files from Mod folder, with exception of aforementioned .ks files. Loading of .ks files is currently usupproted, so you won't be able to load them if you're using Sybaris 2.1
 
 The patcher also gives priority to the files loaded from Mod folder over those loaded from .arc files, meaning if two files have the same name the one from Mod will be loaded.
 
