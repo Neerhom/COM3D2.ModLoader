@@ -45,57 +45,79 @@ namespace COM3D2.ModLoader.Managed
         public static void PhotoBGext()
         {
             HashSet<int> hashSet = new HashSet<int>();
-            string[] bgneilist = GameUty.FileSystemMod.GetList("PhotoBG_NEI", AFileSystemBase.ListType.AllFile);
-            
-            if (bgneilist != null && 0< bgneilist.Length)
-            { 
-            for (int j = 0; j < bgneilist.Length; j++)
+            string[] bgneilist = new string[] { };
+            try
             {
-                if (bgneilist[j].Contains("phot_bg_enabled_list") && bgneilist[j].Contains(".nei"))
+                bgneilist = GameUty.FileSystemMod.GetList("PhotoBG_NEI", AFileSystemBase.ListType.AllFile);
+            }
+            catch { Exception e; }
+
+         
+            if (bgneilist != null && 0 < bgneilist.Length)
+            {
+                for (int j = 0; j < bgneilist.Length; j++)
                 {
-                    string fileName = bgneilist[j].Replace(".nei", "");
-                    wf.CsvCommonIdManager.ReadEnabledIdList(wf.CsvCommonIdManager.FileSystemType.Normal, true, fileName, ref hashSet);
-                }
-          if (bgneilist[j].Contains("phot_bg_list") &&  bgneilist[j].Contains(".nei"))
-                {
-                    string f_strFileName = bgneilist[j];
-                    using (AFileBase aFileBase2 = GameUty.FileSystemMod.FileOpen(f_strFileName))
+                    if (bgneilist[j].Contains("phot_bg_enabled_list") && bgneilist[j].Contains(".nei"))
                     {
-                        using (CsvParser csvParser2 = new CsvParser())
+                        string fileName = bgneilist[j].Replace(".nei", "");
+                        wf.CsvCommonIdManager.ReadEnabledIdList(wf.CsvCommonIdManager.FileSystemType.Normal, true, fileName, ref hashSet);
+                    }
+                 else   if (bgneilist[j].Contains("phot_bg_list") && bgneilist[j].Contains(".nei"))
+                    {
+                        string f_strFileName = bgneilist[j];
+                        using (AFileBase aFileBase2 = GameUty.FileSystemMod.FileOpen(f_strFileName))
                         {
-                            NDebug.Assert(csvParser2.Open(aFileBase2), $"{f_strFileName} is invalid!");
-                            for (int k = 1; k < csvParser2.max_cell_y; k++)
+                            using (CsvParser csvParser = new CsvParser())
                             {
-                                if (csvParser2.IsCellToExistData(0, k) && hashSet.Contains(csvParser2.GetCellAsInteger(0, k)))
+
+                                if (csvParser.Open(aFileBase2))
                                 {
-                                    int num2 = 0;
-                                    PhotoBGData photoBGData2 = new PhotoBGData();
-                                    photoBGData2.id = csvParser2.GetCellAsInteger(num2++, k).ToString();
-                                    photoBGData2.category = csvParser2.GetCellAsString(num2++, k);
-                                    photoBGData2.name = csvParser2.GetCellAsString(num2++, k);
-                                    photoBGData2.create_prefab_name = csvParser2.GetCellAsString(num2++, k);
-                                    string cellAsString2 = csvParser2.GetCellAsString(num2++, k);
-                                    if (string.IsNullOrEmpty(cellAsString2) || PluginData.IsEnabled(cellAsString2))
+
+
+                                    for (int k = 1; k < csvParser.max_cell_y; k++)
                                     {
-                                        PhotoBGData.bg_data_.Add(photoBGData2);
+                                        if (csvParser.IsCellToExistData(0, k) && hashSet.Contains(csvParser.GetCellAsInteger(0, k)))
+                                        {
+                                            int num2 = 0;
+                                            PhotoBGData photoBGData = new PhotoBGData();
+                                            photoBGData.id = csvParser.GetCellAsInteger(num2++, k).ToString();
+                                            photoBGData.category = csvParser.GetCellAsString(num2++, k);
+                                            photoBGData.name = csvParser.GetCellAsString(num2++, k);
+                                            photoBGData.create_prefab_name = csvParser.GetCellAsString(num2++, k);
+                                            string cellAsString = csvParser.GetCellAsString(num2++, k);
+                                            if (string.IsNullOrEmpty(cellAsString) || PluginData.IsEnabled(cellAsString))
+                                            {
+                                                PhotoBGData.bg_data_.Add(photoBGData);
+                                            }
+                                        }
+
                                     }
+                                }
+                                else
+                                {
+                                    UnityEngine.Debug.Log($"Skipping invalid file: Mod/{f_strFileName}");
                                 }
                             }
                         }
                     }
+
                 }
 
             }
-
-        }
         }
 
         public static void PhotoBGobjext()
         {
            
             HashSet<int> hashSet = new HashSet<int>();
-            string[] BgObj_enabled = GameUty.FileSystemMod.GetList("PhotoBG_OBJ_NEI", AFileSystemBase.ListType.AllFile);
-            if (BgObj_enabled != null && BgObj_enabled.Length > 0)
+            string[] BgObj_enabled = new string[] { };
+            try
+            {
+                BgObj_enabled = GameUty.FileSystemMod.GetList("PhotoBG_OBJ_NEI", AFileSystemBase.ListType.AllFile);
+            }
+            catch
+            { Exception e; }
+            if (BgObj_enabled != null && 0 < BgObj_enabled.Length)
             {
                 for (int j = 0; j < BgObj_enabled.Length; j++)
                 {
@@ -105,7 +127,7 @@ namespace COM3D2.ModLoader.Managed
 
                         wf.CsvCommonIdManager.ReadEnabledIdList(wf.CsvCommonIdManager.FileSystemType.Normal, true, filename, ref hashSet);
                     }
-                     if (BgObj_enabled[j].Contains("phot_bg_object_list") && BgObj_enabled[j].Contains(".nei"))
+                  else  if (BgObj_enabled[j].Contains("phot_bg_object_list") && BgObj_enabled[j].Contains(".nei"))
                     {
                         string filename_full = BgObj_enabled[j];
 
@@ -113,25 +135,33 @@ namespace COM3D2.ModLoader.Managed
                         {
                             using (CsvParser csvParser = new CsvParser())
                             {
-                                bool condition = csvParser.Open(aFileBase);
-                                NDebug.Assert(condition, $"{aFileBase} is invalid!");
-                                for (int i = 1; i < csvParser.max_cell_y; i++)
+
+                                if (csvParser.Open(aFileBase))
                                 {
-                                    if (csvParser.IsCellToExistData(0, i) && hashSet.Contains(csvParser.GetCellAsInteger(0, i)))
+                                    for (int i = 1; i < csvParser.max_cell_y; i++)
                                     {
-                                        int num = 0;
-                                        PhotoBGObjectData photoBGObjectData = new PhotoBGObjectData();
-                                        photoBGObjectData.id = (long)csvParser.GetCellAsInteger(num++, i);
-                                        photoBGObjectData.category = csvParser.GetCellAsString(num++, i);
-                                        photoBGObjectData.name = csvParser.GetCellAsString(num++, i);
-                                        photoBGObjectData.create_prefab_name = csvParser.GetCellAsString(num++, i);
-                                        string cellAsString = csvParser.GetCellAsString(num++, i);
-                                        if (string.IsNullOrEmpty(cellAsString) || PluginData.IsEnabled(cellAsString))
+                                        if (csvParser.IsCellToExistData(0, i) && hashSet.Contains(csvParser.GetCellAsInteger(0, i)))
                                         {
-                                            PhotoBGObjectData.bg_data_.Add(photoBGObjectData);
+                                            int num = 0;
+                                            PhotoBGObjectData photoBGObjectData = new PhotoBGObjectData();
+                                            photoBGObjectData.id = (long)csvParser.GetCellAsInteger(num++, i);
+                                            photoBGObjectData.category = csvParser.GetCellAsString(num++, i);
+                                            photoBGObjectData.name = csvParser.GetCellAsString(num++, i);
+                                            photoBGObjectData.create_prefab_name = csvParser.GetCellAsString(num++, i);
+                                            string cellAsString = csvParser.GetCellAsString(num++, i);
+                                            if (string.IsNullOrEmpty(cellAsString) || PluginData.IsEnabled(cellAsString))
+                                            {
+                                                PhotoBGObjectData.bg_data_.Add(photoBGObjectData);
+                                            }
                                         }
                                     }
                                 }
+                                else
+                                {
+                                    UnityEngine.Debug.Log($"Skipping invalid file: Mod/{filename_full}");
+
+                                }
+
                             }
                         }
                     }
@@ -152,10 +182,13 @@ namespace COM3D2.ModLoader.Managed
 
         public static void ModPmat(ref string[] list)
         {
-           
 
-            string[] listmod = GameUty.m_ModFileSystem.GetFileListAtExtension(".pmat");
-
+            string[] listmod = new string[] { };
+            try
+            {
+                listmod = GameUty.m_ModFileSystem.GetFileListAtExtension(".pmat");
+            }
+            catch { Exception e; }
            
             if (list != null && list.Length > 0)
             {
