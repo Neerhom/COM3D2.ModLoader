@@ -179,7 +179,6 @@ namespace COM3D2.ModLoader.Managed
            
         }
 
-
         public static void ModPmat(ref string[] list)
         {
 
@@ -190,19 +189,14 @@ namespace COM3D2.ModLoader.Managed
             }
             catch { Exception e; }
            
-            if (list != null && list.Length > 0)
+            if (listmod != null && list.Length > 0)
             {
                 List<string> convertlist = list.ToList();
-                for (int i = 0; i < listmod.Length; i++)
-                {
-                    convertlist.Add(listmod[i]);
-                }
-
-                list = convertlist.ToArray();
+               
+               convertlist.AddRange(listmod);
+               list = convertlist.ToArray();
             }
-
-           
-
+              
         }
 
     }
