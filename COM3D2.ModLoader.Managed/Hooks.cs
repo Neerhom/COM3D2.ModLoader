@@ -57,12 +57,7 @@ namespace COM3D2.ModLoader.Managed
             {
                 for (int j = 0; j < bgneilist.Length; j++)
                 {
-                    if (bgneilist[j].Contains("phot_bg_enabled_list") && bgneilist[j].Contains(".nei"))
-                    {
-                        string fileName = bgneilist[j].Replace(".nei", "");
-                        wf.CsvCommonIdManager.ReadEnabledIdList(wf.CsvCommonIdManager.FileSystemType.Normal, true, fileName, ref hashSet);
-                    }
-                 else   if (bgneilist[j].Contains("phot_bg_list") && bgneilist[j].Contains(".nei"))
+                     if (bgneilist[j].Contains("phot_bg_list") && bgneilist[j].Contains(".nei") && bgneilist[j].Replace("photobg_nei", "") != "phot_bg_list.nei")
                     {
                         string f_strFileName = bgneilist[j];
                         using (AFileBase aFileBase2 = GameUty.FileSystemMod.FileOpen(f_strFileName))
@@ -76,8 +71,6 @@ namespace COM3D2.ModLoader.Managed
 
                                     for (int k = 1; k < csvParser.max_cell_y; k++)
                                     {
-                                        if (csvParser.IsCellToExistData(0, k) && hashSet.Contains(csvParser.GetCellAsInteger(0, k)))
-                                        {
                                             int num2 = 0;
                                             PhotoBGData photoBGData = new PhotoBGData();
                                             photoBGData.id = csvParser.GetCellAsInteger(num2++, k).ToString();
@@ -85,17 +78,13 @@ namespace COM3D2.ModLoader.Managed
                                             photoBGData.name = csvParser.GetCellAsString(num2++, k);
                                             photoBGData.create_prefab_name = csvParser.GetCellAsString(num2++, k);
                                             string cellAsString = csvParser.GetCellAsString(num2++, k);
-                                            if (string.IsNullOrEmpty(cellAsString) || PluginData.IsEnabled(cellAsString))
-                                            {
-                                                PhotoBGData.bg_data_.Add(photoBGData);
-                                            }
-                                        }
-
+                                            PhotoBGData.bg_data_.Add(photoBGData);
+                                        
                                     }
                                 }
                                 else
                                 {
-                                    UnityEngine.Debug.Log($"Skipping invalid file: Mod/{f_strFileName}");
+                                    Debug.Log($"Skipping invalid file: Mod/{f_strFileName}");
                                 }
                             }
                         }
@@ -119,15 +108,11 @@ namespace COM3D2.ModLoader.Managed
             { Exception e; }
             if (BgObj_enabled != null && 0 < BgObj_enabled.Length)
             {
+               
+                
                 for (int j = 0; j < BgObj_enabled.Length; j++)
                 {
-                    if (BgObj_enabled[j].Contains("phot_bg_object_enabled_list") && BgObj_enabled[j].Contains(".nei"))
-                    {
-                        string filename = BgObj_enabled[j].Replace(".nei", "");
-
-                        wf.CsvCommonIdManager.ReadEnabledIdList(wf.CsvCommonIdManager.FileSystemType.Normal, true, filename, ref hashSet);
-                    }
-                  else  if (BgObj_enabled[j].Contains("phot_bg_object_list") && BgObj_enabled[j].Contains(".nei"))
+                      if (BgObj_enabled[j].Contains("phot_bg_object_list") && BgObj_enabled[j].Contains(".nei") && BgObj_enabled[j].Replace("photobg_obj_nei", "") != "phot_bg_object_list.nei")
                     {
                         string filename_full = BgObj_enabled[j];
 
@@ -140,7 +125,7 @@ namespace COM3D2.ModLoader.Managed
                                 {
                                     for (int i = 1; i < csvParser.max_cell_y; i++)
                                     {
-                                        if (csvParser.IsCellToExistData(0, i) && hashSet.Contains(csvParser.GetCellAsInteger(0, i)))
+                                 
                                         {
                                             int num = 0;
                                             PhotoBGObjectData photoBGObjectData = new PhotoBGObjectData();
@@ -148,17 +133,14 @@ namespace COM3D2.ModLoader.Managed
                                             photoBGObjectData.category = csvParser.GetCellAsString(num++, i);
                                             photoBGObjectData.name = csvParser.GetCellAsString(num++, i);
                                             photoBGObjectData.create_prefab_name = csvParser.GetCellAsString(num++, i);
-                                            string cellAsString = csvParser.GetCellAsString(num++, i);
-                                            if (string.IsNullOrEmpty(cellAsString) || PluginData.IsEnabled(cellAsString))
-                                            {
-                                                PhotoBGObjectData.bg_data_.Add(photoBGObjectData);
-                                            }
+                                            PhotoBGObjectData.bg_data_.Add(photoBGObjectData);
+                                    
                                         }
                                     }
                                 }
                                 else
                                 {
-                                    UnityEngine.Debug.Log($"Skipping invalid file: Mod/{filename_full}");
+                                    Debug.Log($"Skipping invalid file: Mod/{filename_full}");
 
                                 }
 
@@ -179,6 +161,7 @@ namespace COM3D2.ModLoader.Managed
            
         }
 
+
         public static void ModPmat(ref string[] list)
         {
 
@@ -198,6 +181,8 @@ namespace COM3D2.ModLoader.Managed
             }
               
         }
+
+        
 
     }
 }
