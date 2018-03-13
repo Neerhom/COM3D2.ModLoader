@@ -91,24 +91,24 @@ namespace COM3D2.ModLoader.Patcher
             MethodDefinition UpdateFileSystemPath = gameUty.GetMethod("UpdateFileSystemPath");
             MethodDefinition addbundlestobg = hooks.GetMethod("addbundlestobg");
             counter =0;
-            for (int inst = 0; inst < UpdateFileSystemPath.Body.Instructions.Count; inst++)
-            {
-                if (UpdateFileSystemPath.Body.Instructions[inst].OpCode == OpCodes.Ldstr)
-                {
-                    string target = UpdateFileSystemPath.Body.Instructions[inst].Operand as string;
-
-                    if (target == "Mod")
-                    {
-                        counter += 1;
-
-                        if (counter == 2)
-                        {
-                            UpdateFileSystemPath.InjectWith(addbundlestobg, codeOffset: inst + 3);
-                            break;
-                        }
-                    }
-                }
-            }
+          for (int inst = 0; inst < UpdateFileSystemPath.Body.Instructions.Count; inst++)
+          {
+              if (UpdateFileSystemPath.Body.Instructions[inst].OpCode == OpCodes.Ldstr)
+              {
+                  string target = UpdateFileSystemPath.Body.Instructions[inst].Operand as string;
+     
+                  if (target == "Mod")
+                  {
+                      counter += 1;
+     
+                      if (counter == 2)
+                      {
+                          UpdateFileSystemPath.InjectWith(addbundlestobg, codeOffset: inst + 3);
+                          break;
+                      }
+                  }
+              }
+          }
 
             // enable loading of .pmat filesfrom Mod folder
 
