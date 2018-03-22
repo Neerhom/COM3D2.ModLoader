@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 
 namespace COM3D2.ModLoader.Managed
 {
@@ -33,12 +34,24 @@ namespace COM3D2.ModLoader.Managed
         /// <returns>A list of files in the specified path.</returns>
         public override string[] GetList(string f_str_path, ListType type)
         {
-            List<string> result = new List<string>(base.GetList(f_str_path, type));
 
-            if(GameUty.m_ModFileSystem != null)
-                result.AddRange(GameUty.m_ModFileSystem.GetList(f_str_path, type));
 
-            return result.ToArray();
+            if (GameUty.m_ModFileSystem != null && f_str_path == "prioritymaterial")
+            {
+                Dictionary<string, string> pmat = new Dictionary<string, string>();
+                foreach (string str in base.GetList(f_str_path, type))
+                      pmat[Path.GetFileName(str)] = str;
+                    
+
+                foreach (string str in GameUty.m_ModFileSystem.GetFileListAtExtension(".pmat"))
+                    pmat[Path.GetFileName(str)] = str;
+
+                return pmat.Values.ToArray();
+            }
+                     
+            
+                return base.GetList(f_str_path, type);
+            
         }
 
         /// <summary>
@@ -46,15 +59,16 @@ namespace COM3D2.ModLoader.Managed
         /// </summary>
         /// <param name="extension">Extension of the file.</param>
         /// <returns>A list of files with the specified extension.</returns>
-        public override string[] GetFileListAtExtension(string extension)
-        {
-            List<string> result = new List<string>(base.GetFileListAtExtension(extension));
-
-            if (GameUty.m_ModFileSystem != null)
-                result.AddRange(GameUty.m_ModFileSystem.GetFileListAtExtension(extension));
-
-            return result.ToArray();
-        }
+     //   public override string[] GetFileListAtExtension(string extension)
+     //   {
+     //       List<string> result = new List<string>(base.GetFileListAtExtension(extension));
+     //
+     //       if (GameUty.m_ModFileSystem != null)
+     //           result.AddRange(GameUty.m_ModFileSystem.GetFileListAtExtension(extension));
+     //
+     //       return result.ToArray();
+     //
+     //   }
 
         /// <summary>
         /// Checks if the file exists in the file system.
