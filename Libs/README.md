@@ -5,6 +5,6 @@ Assembly-CSharp.dll (COM3D2.ModLoader.Managed required pre-patched Assembly-CSha
 
 Assembly-CSharp-firstpass.dll (COM3D2folder/COM3D2x64_Data/Managed)
 
-Mono.Cecil.dll (Comes with Sybaris. Found in Sybaris/Loader)
+Mono.Cecil.dll (Comes with Sybaris. Found in Sybaris/Loader or Sybaris)
 
 [Mono.Cecil.Inject.dll](https://github.com/denikson/Mono.Cecil.Inject/releases)
