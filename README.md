@@ -11,9 +11,6 @@ The patcher also gives priority to the files loaded from Mod folder over those l
 
 Folder structure inside Mod folder is irrelevant, so as long it's inside Mod it's going to work. 
 
-Loading of .pmat files is supported, however their override is likely not, though I'm sure what's point of that would be
-
-
 ModLoader also enables loading of Unity 5.6.4 Asset Bundles as Backgrounds and Background objects for Photo mode, assuming their files extension was changed to .asset_bg.
 
 It also enables appending of data to photo_bg_list.nei and phot_bg_object_list.nei with disregard for their list_nabled.nei counterparts or ID values.
@@ -22,10 +19,18 @@ See more details on [wiki page](https://github.com/Neerhom/COM3D2.ModLoader/wiki
 Because of this feature, ModLoader also comes with WORKING mirror props for Photo Mode!
 Do note, that I have no claims over the scripts resposible for reflections, as it was a free asset from Unity store, which is no longer avaialbe. If you wish to use this script, simply decomplie the .dll files inside UnityInjector.
 
+# Supporting patchers
 
+# COM3D2.ProcScriptBinIgonre
+Patcher prevents the game from throwing pesky "ProcScriptBin 例外 : ヘッダーファイルが不正です" errors and closing, when it thinks that file (menu, tex, mate, mod) header is incorrect.
+
+# COM3D2.ModMenuAccel
+
+A patcher that improves game startup times, improving upond KISS' way of loading menu files from Mod folder.
 
 Pre-requisites:
 [Sybaris](https://ux.getuploader.com/cm3d2_e/download/317) or [Sybaris 2.1](https://ux.getuploader.com/cm3d2_j/download/68) 
+
 [Mono.Cecil.Inject](https://github.com/denikson/Mono.Cecil.Inject/releases)
 
 Installation:
