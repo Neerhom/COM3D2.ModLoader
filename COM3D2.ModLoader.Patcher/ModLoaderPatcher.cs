@@ -74,6 +74,9 @@ namespace COM3D2.ModLoader.Patcher
                 }
             }
 
+           
+
+
             // enable PhotoBGObj to use asset bundles
 
             MethodDefinition PhotBGObj_Instantiate = PhotoBGObjectData.GetMethod("Instantiate");
@@ -110,14 +113,7 @@ namespace COM3D2.ModLoader.Patcher
               }
           }
 
-            // enable loading of .pmat filesfrom Mod folder
-
-
-            TypeDefinition ImportCM = assembly.MainModule.GetType("ImportCM");
-            MethodDefinition ReadMaterial = ImportCM.GetMethod("ReadMaterial");
-            MethodDefinition ModPmat = hooks.GetMethod("ModPmat");
-
-            ReadMaterial.InjectWith(ModPmat, codeOffset: 9, flags: InjectFlags.PassLocals, localsID: new[] { 0 });
+         
 
         }
     }
