@@ -15,6 +15,7 @@ ModLoader also enables loading of Unity 5.6.4 Asset Bundles as Backgrounds and B
 
 It also enables appending of data to photo_bg_list.nei and phot_bg_object_list.nei with disregard for their list_nabled.nei counterparts or ID values.
 See more details on [wiki page](https://github.com/Neerhom/COM3D2.ModLoader/wiki/.asset_bg-files-and-what-to-do-with-them)
+You can also refer to this [wiki page](https://github.com/Neerhom/COM3D2.ModLoader/wiki/Creating-.asset_bg-files) for a quick tutorial on how to create .asset_bg file and how roload them in COM3D2, using ModLoader
 
 Because of this feature, ModLoader also comes with WORKING mirror props for Photo Mode!
 Do note, that I have no claims over the scripts resposible for reflections, as it was a free asset from Unity store, which is no longer avaialbe. If you wish to use this script, simply decomplie the .dll files inside UnityInjector.
@@ -26,7 +27,7 @@ Patcher prevents the game from throwing pesky "ProcScriptBin 例外 : ヘッダ�
 
 # COM3D2.ModMenuAccel
 
-A patcher that improves game startup times, improving upond KISS' way of loading menu files from Mod folder.
+A patcher that improves game startup times, by improving upond KISS' way of loading menu files from Mod folder.
 
 Pre-requisites:
 [Sybaris](https://ux.getuploader.com/cm3d2_e/download/317) or [Sybaris 2.1](https://ux.getuploader.com/cm3d2_j/download/68) 
