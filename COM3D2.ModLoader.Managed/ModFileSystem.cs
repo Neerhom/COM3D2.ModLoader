@@ -54,21 +54,7 @@ namespace COM3D2.ModLoader.Managed
             
         }
 
-        /// <summary>
-        /// Gets all files of the specified extension.
-        /// </summary>
-        /// <param name="extension">Extension of the file.</param>
-        /// <returns>A list of files with the specified extension.</returns>
-     //   public override string[] GetFileListAtExtension(string extension)
-     //   {
-     //       List<string> result = new List<string>(base.GetFileListAtExtension(extension));
-     //
-     //       if (GameUty.m_ModFileSystem != null)
-     //           result.AddRange(GameUty.m_ModFileSystem.GetFileListAtExtension(extension));
-     //
-     //       return result.ToArray();
-     //
-     //   }
+       
 
         /// <summary>
         /// Checks if the file exists in the file system.
