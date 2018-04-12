@@ -95,18 +95,22 @@ namespace COM3D2.ModLoader.Patcher
             //add mod asset bundles to BgFiles
             MethodDefinition UpdateFileSystemPath = gameUty.GetMethod("UpdateFileSystemPath");
             MethodDefinition addbundlestobg = hooks.GetMethod("addbundlestobg");
-            
-          for (int inst = UpdateFileSystemPath.Body.Instructions.Count; inst >0; inst--)
+          int counter= 0;  
+          for (int inst =0; inst < UpdateFileSystemPath.Body.Instructions.Count; inst++)
           {
-              if (UpdateFileSystemPath.Body.Instructions[inst].OpCode == OpCodes.Ldstr)
-              {
-                  string target = UpdateFileSystemPath.Body.Instructions[inst].Operand as string;
-     
-                  if (target == "Mod")
-             
-                          UpdateFileSystemPath.InjectWith(addbundlestobg, codeOffset: inst + 3);
-                          break;
-             
+                if (UpdateFileSystemPath.Body.Instructions[inst].OpCode == OpCodes.Ldstr)
+                {
+                    string target = UpdateFileSystemPath.Body.Instructions[inst].Operand as string;
+
+                    if (target == "Mod")
+                    {
+                        counter++;
+                        if (counter == 2)
+                        {
+                            UpdateFileSystemPath.InjectWith(addbundlestobg, codeOffset: inst + 3);
+                            break;
+                        }
+                    }
               }
           }
 
