@@ -96,7 +96,7 @@ namespace COM3D2.ModLoader.Patcher
             MethodDefinition UpdateFileSystemPath = gameUty.GetMethod("UpdateFileSystemPath");
             MethodDefinition addbundlestobg = hooks.GetMethod("addbundlestobg");
             
-          for (int inst = UpdateFileSystemPath.Body.Instructions.Count; inst < UpdateFileSystemPath.Body.Instructions.Count; inst--)
+          for (int inst = UpdateFileSystemPath.Body.Instructions.Count; inst >0; inst--)
           {
               if (UpdateFileSystemPath.Body.Instructions[inst].OpCode == OpCodes.Ldstr)
               {
