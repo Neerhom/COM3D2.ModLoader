@@ -88,28 +88,27 @@ namespace COM3D2.ModLoader.Patcher
             {
                 if (PhotBGObj_Instantiate.Body.Instructions[inst].OpCode == OpCodes.Ret)
                 {
-                    PhotBGObj_Instantiate.InjectWith(PhotBGObj_Instantiate_Ext, codeOffset: inst-5, flags: InjectFlags.PassInvokingInstance | InjectFlags.PassLocals, localsID: new[] { 2 });
+                    PhotBGObj_Instantiate.InjectWith(PhotBGObj_Instantiate_Ext, codeOffset: inst-5, flags: InjectFlags.PassInvokingInstance | InjectFlags.PassLocals, localsID: new[] { 3 });
                     break;
                 }
             }
             //add mod asset bundles to BgFiles
-            MethodDefinition UpdateFileSystemPath = gameUty.GetMethod("UpdateFileSystemPath");
+       
             MethodDefinition addbundlestobg = hooks.GetMethod("addbundlestobg");
-          int counter= 0;  
-          for (int inst =0; inst < UpdateFileSystemPath.Body.Instructions.Count; inst++)
+         
+          for (int inst =0; inst < init.Body.Instructions.Count; inst++)
           {
-                if (UpdateFileSystemPath.Body.Instructions[inst].OpCode == OpCodes.Ldstr)
+                if (init.Body.Instructions[inst].OpCode == OpCodes.Call)
                 {
-                    string target = UpdateFileSystemPath.Body.Instructions[inst].Operand as string;
+                    MethodReference target = init.Body.Instructions[inst].Operand as MethodReference;
 
-                    if (target == "Mod")
+                    if (target.Name == "UpdateFileSystemPath")
                     {
-                        counter++;
-                        if (counter == 2)
-                        {
-                            UpdateFileSystemPath.InjectWith(addbundlestobg, codeOffset: inst + 3);
+                  
+                        
+                            init.InjectWith(addbundlestobg, codeOffset: inst + 1);
                             break;
-                        }
+                        
                     }
               }
           }
