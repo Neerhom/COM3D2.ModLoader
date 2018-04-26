@@ -1,7 +1,7 @@
 # COM3D2.ModLoader
 Sybaris patcher for GameData-like functionality.
 
-**Note. ModLoader version 1.4.2 and above, REQUIRE game version 1.11 or higher.
+**Note. ModLoader version 1.4.2 and above, REQUIRE game version 1.11 or higher.**
 
 Since Sybaris currently isn't able to load any mods via Sybaris/Gamedata folder, this patcher was made to fix that, by giving such functionality to Mod folder.
 
