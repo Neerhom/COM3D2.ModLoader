@@ -43,7 +43,8 @@ Place Mono.Cecil.Inject into Sybaris/Loader
 
 Place contents of Loader inside Sybaris/Loader
 
-For Sybaris 2.1 the installation is that same, but you'd placing files into Sybaris folder instead. 
+For Sybaris 2.1 the installation is that same, but you'd placing files into Sybaris folder instead.
+
 For UnityDoorStop [SybarisLoader](https://github.com/NeighTools/SybarisLoader)
 
 The installation is the same as for Sybaris 2.1, except that installing Mono.Cecil.Inject is not required, as it is shipped with it.
