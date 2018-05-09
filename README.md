@@ -31,6 +31,8 @@ Patcher prevents the game from throwing pesky "ProcScriptBin 例外 : ヘッダ�
 
 A patcher that improves game startup times, by improving upond KISS' way of loading menu files from Mod folder.
 
+The patcher also improves startup times (and even in-game load times, in few cases) by improving upon GetFileListAtExtension() method of both filesystem types, which make this patcher to be more than the name suggest, but since this functionality was added post-release, the name was kept as to simplify upgrade for the usesr. Credit for this bit of functionality goes to  はてな (twitter @hatena_37)
+
 Pre-requisites:
 [Sybaris](https://ux.getuploader.com/cm3d2_e/download/317) or [Sybaris 2.1](https://ux.getuploader.com/cm3d2_j/download/68) 
 
@@ -42,6 +44,9 @@ Place Mono.Cecil.Inject into Sybaris/Loader
 Place contents of Loader inside Sybaris/Loader
 
 For Sybaris 2.1 the installation is that same, but you'd placing files into Sybaris folder instead. 
+For UnityDoorStop [SybarisLoader](https://github.com/NeighTools/SybarisLoader)
+
+The installation is the same as for Sybaris 2.1, except that installing Mono.Cecil.Inject is not required, as it is shipped with it.
 
 To enable Mirror Props put contents of Mod Folder along game's exe file, and Contents of UnityInjector, into Sybaris/Plugins/UnityInjector; for Sybaris 2.1 place contents of UnityInjector into Sybaris/UnityInjector
 
