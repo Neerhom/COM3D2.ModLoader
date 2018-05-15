@@ -45,22 +45,24 @@ namespace COM3D2.ModLoader.Managed
         public static void PhotoBGext()
         {
 
-            string[] bgneilist = new string[] { };
+            string[] bg_nelist = new string[] { };
             try
             {
-                bgneilist = GameUty.FileSystemMod.GetList("PhotoBG_NEI", AFileSystemBase.ListType.AllFile);
+                bg_nelist = GameUty.FileSystemMod.GetList("PhotoBG_NEI", AFileSystemBase.ListType.AllFile);
             }
             catch (Exception) { }
 
 
-            if (bgneilist != null && 0 < bgneilist.Length)
+            if (bg_nelist != null && 0 < bg_nelist.Length)
             {
-                for (int j = 0; j < bgneilist.Length; j++)
+                for (int j = 0; j < bg_nelist.Length; j++)
                 {
-                    if (bgneilist[j].Contains("phot_bg_list") && Path.GetExtension(bgneilist[j]) == ".nei" && Path.GetFileName(bgneilist[j]) != "phot_bg_list.nei")
+                    string nei_filename = Path.GetFileName(bg_nelist[j]);
+
+                    if (Path.GetExtension(nei_filename) == ".nei" && nei_filename != "phot_bg_list.nei")
                     {
-                        //string f_strFileName = bgneilist[j];
-                        using (AFileBase aFileBase2 = GameUty.FileSystemMod.FileOpen(bgneilist[j]))
+                       
+                        using (AFileBase aFileBase2 = GameUty.FileSystemMod.FileOpen(nei_filename))
                         {
                             using (CsvParser csvParser = new CsvParser())
                             {
@@ -84,7 +86,7 @@ namespace COM3D2.ModLoader.Managed
                                 }
                                 else
                                 {
-                                    Debug.Log($"Skipping invalid file: Mod/{bgneilist[j]}");
+                                    Debug.Log($"Skipping invalid file: Mod/{bg_nelist[j]}");
                                 }
                             }
                         }
@@ -113,11 +115,12 @@ namespace COM3D2.ModLoader.Managed
 
                 for (int j = 0; j < BgObj_list.Length; j++)
                 {
+                    string nei_filename = Path.GetFileName(BgObj_list[j]);
 
-                    if (BgObj_list[j].Contains("phot_bg_object_list") && Path.GetExtension(BgObj_list[j]) == ".nei" && Path.GetFileName(BgObj_list[j]) != "phot_bg_object_list.nei")
+                    if ( Path.GetExtension(nei_filename) == ".nei" && nei_filename != "phot_bg_object_list.nei")
                     {
 
-                        using (AFileBase aFileBase = GameUty.FileSystemMod.FileOpen(BgObj_list[j]))
+                        using (AFileBase aFileBase = GameUty.FileSystemMod.FileOpen(nei_filename))
                         {
                             using (CsvParser csvParser = new CsvParser())
                             {
@@ -182,9 +185,11 @@ namespace COM3D2.ModLoader.Managed
             {
                 for (int j = 0; j < PhotoMotNei.Length; j++)
                 {
-                    if (PhotoMotNei[j].Contains("phot_motion_list") && Path.GetExtension(PhotoMotNei[j]) == ".nei" && Path.GetFileName(PhotoMotNei[j]) != "phot_motion_list.nei")
+                    string nei_filename = Path.GetFileName(PhotoMotNei[j]);
+
+                    if ( Path.GetExtension(nei_filename) == ".nei" && nei_filename != "phot_motion_list.nei")
                     {
-                        using (AFileBase aFileBase = GameUty.FileSystem.FileOpen(PhotoMotNei[j]))
+                        using (AFileBase aFileBase = GameUty.FileSystem.FileOpen(nei_filename))
                         {
                             using (CsvParser csvParser = new CsvParser())
                             {
