@@ -17,7 +17,7 @@ ModLoader also enables loading of Unity 5.6.4 Asset Bundles as Backgrounds and B
 
 It also enables appending of data to a set of .nei files with disregard for their list_nabled.nei counterparts or ID values.
 See more details on [wiki page](https://github.com/Neerhom/COM3D2.ModLoader/wiki/.asset_bg-files-and-NEI-append)
-You can also refer to this [wiki page](https://github.com/Neerhom/COM3D2.ModLoader/wiki/Creating-.asset_bg-files) for a quick tutorial on how to create .asset_bg file and how roload them in COM3D2, using ModLoader
+You can also refer to this [wiki page](https://github.com/Neerhom/COM3D2.ModLoader/wiki/Creating-.asset_bg-files) for a quick tutorial on how to create .asset_bg file and how to load them in COM3D2, using ModLoader
 
 Because of this feature, ModLoader also comes with WORKING mirror props for Photo Mode!
 Do note, that I have no claims over the scripts resposible for reflections, as it was a free asset from Unity store, which is no longer avaialbe. If you wish to use this script, simply decomplie the .dll files inside UnityInjector.
