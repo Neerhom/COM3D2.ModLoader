@@ -33,7 +33,13 @@ namespace COM3D2.ModLoader.Patcher
             gameUty.ChangeAccess("m_FileSystem", true, false); // Make original file system public to allow replacing
             gameUty.ChangeAccess("m_ModFileSystem", true, false); // Make the mod file system public
 
-            // enablie nei append to PhotBGData
+            // hook in the ArcLoader to enable loading of ARCs and .ks files
+            init.InjectWith(hookAssembly.MainModule.GetType($"{HOOK_NAME}.ArcLoader").GetMethod("Install") ,-1);
+
+
+
+
+            // enable nei append to PhotBGData
             TypeDefinition PhotoBGData = assembly.MainModule.GetType("PhotoBGData");
             PhotoBGData.ChangeAccess("bg_data_", true, false); // make public to allow hook access
             MethodDefinition PhotoBGDataCreate = PhotoBGData.GetMethod("Create");
