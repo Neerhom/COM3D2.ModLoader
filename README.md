@@ -3,11 +3,13 @@ Sybaris patcher for GameData-like functionality.
 
 **Note. ModLoader version 1.4.2 and above, REQUIRE game version 1.11 or higher.**
 
-Since Sybaris currently isn't able to load any mods via Sybaris/Gamedata folder, this patcher was made to fix that, by giving such functionality to Mod folder.
+Since Sybaris 2.1 currently isn't able to load any mods via Sybaris/Gamedata folder, this patcher was made to fix that, by giving such functionality to Mod folder.
 
-.ks files or scripts, are handled by the game in a different manner, which has not been changed for COM3D2, as such they can be loaded from Sybaris/Gamedata
+This enables loading of any files that game would call from it's .arc files from Mod folder.
 
-This enables loading of any files that game would call from it's .arc files from Mod folder, with exception of aforementioned .ks files. Loading of .ks files is currently unsupported, so you won't be able to load them if you're using Sybaris 2.1
+The patcher also enable loading of custom .arc files from Mod folder, but it should be unecessary.
+
+While ModLoader is capable of loading .ks files from Mod folder (added in ver 1.5) the handling of those is a bit special and those curious can read about it on [wiki page](https://github.com/Neerhom/COM3D2.ModLoader/wiki/Tech-behind-.arc-and-.ks-loading)
 
 The patcher also gives priority to the files loaded from Mod folder over those loaded from .arc files, meaning if two files have the same name the one from Mod will be loaded.
 
@@ -34,20 +36,15 @@ A patcher that improves game startup times, by improving upond KISS' way of load
 The patcher also improves startup times (and even in-game load times, in few cases) by improving upon GetFileListAtExtension() method of both filesystem types, which make this patcher to be more than the name suggest, but since this functionality was added post-release, the name was kept as to simplify upgrade for the usesr. Credit for this bit of functionality goes to  はてな (twitter @hatena_37)
 
 Pre-requisites:
-[Sybaris](https://ux.getuploader.com/cm3d2_e/download/317) or [Sybaris 2.1](https://ux.getuploader.com/cm3d2_j/download/68) 
+ [Sybaris 2.1](https://ux.getuploader.com/cm3d2_j/download/68) or UnityDoorStop [SybarisLoader](https://github.com/NeighTools/SybarisLoader)
 
-[Mono.Cecil.Inject](https://github.com/denikson/Mono.Cecil.Inject/releases)
+While [Sybaris 2.2](https://ux.getuploader.com/cm3d2_j/download/154) is also a possible option, the functionality is not confirmed nor it will be as I'm not fan of it.
+
 
 Installation:
-Place Mono.Cecil.Inject into Sybaris/Loader
 
-Place contents of Loader inside Sybaris/Loader
+Put contents of Sybaris into Sybaris folder
 
-For Sybaris 2.1 the installation is that same, but you'd placing files into Sybaris folder instead.
-
-For UnityDoorStop [SybarisLoader](https://github.com/NeighTools/SybarisLoader)
-The installation is the same as for Sybaris 2.1, except that installing Mono.Cecil.Inject is not required, as it is shipped with it.
-
-To enable Mirror Props put contents of Mod Folder along game's exe file, and Contents of UnityInjector, into Sybaris/Plugins/UnityInjector; for Sybaris 2.1 place contents of UnityInjector into Sybaris/UnityInjector
+To enable Mirror Props put contents of Mod Folder along game's exe file, and Contents of UnityInjector, into Sybaris/UnityInjector.
 
 The initial version is written by [denikson](https://github.com/denikson) and i'm left with maintenance.
