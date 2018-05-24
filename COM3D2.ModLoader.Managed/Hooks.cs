@@ -79,7 +79,7 @@ namespace COM3D2.ModLoader.Managed
                                         photoBGData.category = csvParser.GetCellAsString(num2++, k);
                                         photoBGData.name = csvParser.GetCellAsString(num2++, k);
                                         photoBGData.create_prefab_name = csvParser.GetCellAsString(num2++, k);
-                                        string cellAsString = csvParser.GetCellAsString(num2++, k);
+                                     //   string cellAsString = csvParser.GetCellAsString(num2++, k);
                                         PhotoBGData.bg_data_.Add(photoBGData);
 
                                     }
@@ -137,6 +137,7 @@ namespace COM3D2.ModLoader.Managed
                                             photoBGObjectData.category = csvParser.GetCellAsString(num++, i);
                                             photoBGObjectData.name = csvParser.GetCellAsString(num++, i);
                                             photoBGObjectData.create_prefab_name = csvParser.GetCellAsString(num++, i);
+                                            photoBGObjectData.create_asset_bundle_name = csvParser.GetCellAsString(num++, i);
                                             PhotoBGObjectData.bg_data_.Add(photoBGObjectData);
 
                                         }
@@ -159,6 +160,8 @@ namespace COM3D2.ModLoader.Managed
 
         //if game's base code fails to create GameObject from Resource files, then this method would load it from .asset_bg
         // this allows use of .asset_bg files as Photo Mode Bacground objects
+        // this is no longer required, as game can now use .asset_bg files as photo bg object, but since those loaded from create_asset_bundle_name field
+        // removing this would mean loosing compatibility with older nei files.
         public static void PhotBGObj_Instantiate_Ext(PhotoBGObjectData self, ref UnityEngine.Object @object)
         {
 
