@@ -6,6 +6,7 @@ using System.Text;
 using Mono.Cecil;
 using Mono.Cecil.Inject;
 using Mono.Cecil.Cil;
+using UnityEngine;
 
 namespace COM3D2.ModLoader.Patcher
 {
@@ -85,17 +86,32 @@ namespace COM3D2.ModLoader.Patcher
            
 
 
-            // enable PhotoBGObj to use asset bundles
+            // enable PhotoBGObj to use asset bundles when
+            // this is somwhat obsolete but it is here in order to keep compatibility with older nei files
 
             MethodDefinition PhotBGObj_Instantiate = PhotoBGObjectData.GetMethod("Instantiate");
             MethodDefinition PhotBGObj_Instantiate_Ext = hooks.GetMethod("PhotBGObj_Instantiate_Ext");
 
             for (int inst = 0; inst < PhotBGObj_Instantiate.Body.Instructions.Count; inst++)
             {
-                if (PhotBGObj_Instantiate.Body.Instructions[inst].OpCode == OpCodes.Ret)
+                if (PhotBGObj_Instantiate.Body.Instructions[inst].OpCode == OpCodes.Ldstr && (string)PhotBGObj_Instantiate.Body.Instructions[inst].Operand == "Prefab/")
                 {
-                    PhotBGObj_Instantiate.InjectWith(PhotBGObj_Instantiate_Ext, codeOffset: inst-5, flags: InjectFlags.PassInvokingInstance | InjectFlags.PassLocals, localsID: new[] { 3 });
-                    break;
+                    
+                        for (int j = 0; j < PhotBGObj_Instantiate.Body.Variables.Count; j++)
+
+                        {
+                            
+
+                            if (PhotBGObj_Instantiate.Body.Variables[j].VariableType.FullName == "UnityEngine.Object") // get index of local variable of UnityEngine.Object type
+                            {
+                                PhotBGObj_Instantiate.InjectWith(PhotBGObj_Instantiate_Ext, codeOffset: inst + 6, flags: InjectFlags.PassInvokingInstance | InjectFlags.PassLocals, localsID: new[] { j });
+
+                                break;
+                            }
+                        }
+
+                        break;
+                    
                 }
             }
             //add mod asset bundles to BgFiles
