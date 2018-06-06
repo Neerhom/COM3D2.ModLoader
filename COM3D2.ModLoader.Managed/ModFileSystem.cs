@@ -32,27 +32,27 @@ namespace COM3D2.ModLoader.Managed
         /// <param name="f_str_path">Path to a directory.</param>
         /// <param name="type">Type of the list.</param>
         /// <returns>A list of files in the specified path.</returns>
-        public override string[] GetList(string f_str_path, ListType type)
-        {
-
-
-            if (GameUty.m_ModFileSystem != null && f_str_path == "prioritymaterial")
-            {
-                Dictionary<string, string> pmat = new Dictionary<string, string>();
-                foreach (string str in base.GetList(f_str_path, type))
-                      pmat[Path.GetFileName(str)] = str;
-                    
-
-                foreach (string str in GameUty.m_ModFileSystem.GetFileListAtExtension(".pmat"))
-                    pmat[Path.GetFileName(str)] = str;
-
-                return pmat.Values.ToArray();
-            }
-                     
-            
-                return base.GetList(f_str_path, type);
-            
-        }
+   //     public override string[] GetList(string f_str_path, ListType type)
+   //     {
+   //
+   //
+   //       if (GameUty.m_ModFileSystem != null && f_str_path == "prioritymaterial")
+   //       {
+   //           Dictionary<string, string> pmat = new Dictionary<string, string>();
+   //           foreach (string str in base.GetList(f_str_path, type))
+   //                 pmat[Path.GetFileName(str)] = str;
+   //               
+   // 
+   //           foreach (string str in GameUty.m_ModFileSystem.GetFileListAtExtension(".pmat"))
+   //               pmat[Path.GetFileName(str)] = str;
+   // 
+   //           return pmat.Values.ToArray();
+   //       }
+   //                  
+   //         
+   //             return base.GetList(f_str_path, type);
+   //         
+   //     }
 
        
 
