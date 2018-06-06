@@ -155,6 +155,13 @@ namespace COM3D2.ModLoader.Patcher
                 }
             }
 
+            // patch in PmatHandler for loading of mod pmat files, override of base .pmat files and handling of pmat hash conflicts
+
+            TypeDefinition ImportCM = assembly.MainModule.GetType("ImportCM");
+            ImportCM.ChangeAccess("m_hashPriorityMaterials", true);
+
+            MethodDefinition ReadMaterial = ImportCM.GetMethod("ReadMaterial");
+            ReadMaterial.InjectWith(hooks.GetMethod("PmatHandler"));
         }
     }
 }
