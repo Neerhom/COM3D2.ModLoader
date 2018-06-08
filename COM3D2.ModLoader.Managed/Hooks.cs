@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using UnityEngine;
+using System.Reflection;
 
 
 namespace COM3D2.ModLoader.Managed
@@ -61,7 +62,7 @@ namespace COM3D2.ModLoader.Managed
 
                     if (Path.GetExtension(nei_filename) == ".nei" && nei_filename != "phot_bg_list.nei")
                     {
-                       
+
                         using (AFileBase aFileBase2 = GameUty.FileSystemMod.FileOpen(nei_filename))
                         {
                             using (CsvParser csvParser = new CsvParser())
@@ -79,7 +80,7 @@ namespace COM3D2.ModLoader.Managed
                                         photoBGData.category = csvParser.GetCellAsString(num2++, k);
                                         photoBGData.name = csvParser.GetCellAsString(num2++, k);
                                         photoBGData.create_prefab_name = csvParser.GetCellAsString(num2++, k);
-                                     //   string cellAsString = csvParser.GetCellAsString(num2++, k);
+                                        //   string cellAsString = csvParser.GetCellAsString(num2++, k);
                                         PhotoBGData.bg_data_.Add(photoBGData);
 
                                     }
@@ -117,7 +118,7 @@ namespace COM3D2.ModLoader.Managed
                 {
                     string nei_filename = Path.GetFileName(BgObj_list[j]);
 
-                    if ( Path.GetExtension(nei_filename) == ".nei" && nei_filename != "phot_bg_object_list.nei")
+                    if (Path.GetExtension(nei_filename) == ".nei" && nei_filename != "phot_bg_object_list.nei")
                     {
 
                         using (AFileBase aFileBase = GameUty.FileSystemMod.FileOpen(nei_filename))
@@ -190,7 +191,7 @@ namespace COM3D2.ModLoader.Managed
                 {
                     string nei_filename = Path.GetFileName(PhotoMotNei[j]);
 
-                    if ( Path.GetExtension(nei_filename) == ".nei" && nei_filename != "phot_motion_list.nei")
+                    if (Path.GetExtension(nei_filename) == ".nei" && nei_filename != "phot_motion_list.nei")
                     {
                         using (AFileBase aFileBase = GameUty.FileSystem.FileOpen(nei_filename))
                         {
@@ -237,24 +238,74 @@ namespace COM3D2.ModLoader.Managed
 
         public static void PmatHandler()
         {
-            if (ImportCM.m_hashPriorityMaterials == null)
+            FieldInfo m_hashPriorityMaterials = typeof(ImportCM).GetField("m_hashPriorityMaterials",
+                                            BindingFlags.Static | BindingFlags.NonPublic);
+            var pmadt_dic_value = m_hashPriorityMaterials.GetValue(null);
+            Dictionary<int, KeyValuePair<string, float>> pmatlist = new Dictionary<int, KeyValuePair<string, float>> ();
+            if (pmadt_dic_value == null)
             {
-
-                ImportCM.m_hashPriorityMaterials = new Dictionary<int, KeyValuePair<string, float>>();
-                string[] gamepamt = GameUty.FileSystem.GetList("prioritymaterial", AFileSystemBase.ListType.AllFile);
-                string[] modpmat = GameUty.FileSystemMod.GetFileListAtExtension(".pmat");
-
-                string[] list = new string[gamepamt.Length+modpmat.Length];
-                Array.Copy(modpmat, list, modpmat.Length);
-                Array.Copy(gamepamt, 0, list, modpmat.Length, gamepamt.Length);
                 
-                if (list != null && 0 < list.Length)
+                string[] gamepmat = GameUty.FileSystem.GetList("prioritymaterial", AFileSystemBase.ListType.AllFile);
+                string[] modpmat = GameUty.m_ModFileSystem.GetFileListAtExtension(".pmat");
+                
+                if (modpmat != null && 0 < modpmat.Length)
                 {
-                    for (int i = 0; i < list.Length; i++)
+                    for (int i = 0; i < modpmat.Length; i++)
                     {
-                        if (Path.GetExtension(list[i]) == ".pmat")
+                        if (Path.GetExtension(modpmat[i]) == ".pmat")
                         {
-                            string text = list[i];
+                            string text = modpmat[i];
+                            using (AFileBase aFileBase = GameUty.FileOpen(Path.GetFileName(text), null))
+                            {
+                                if (aFileBase.IsValid())
+                                {
+                                    byte[] buffer = aFileBase.ReadAll();
+                                    using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(buffer), Encoding.UTF8))
+                                    {
+                                        string a = binaryReader.ReadString();
+                                        if (a == "CM3D2_PMATERIAL")
+                                        {
+
+                                            int num = binaryReader.ReadInt32();
+                                            int key = binaryReader.ReadInt32();
+                                            string key2 = binaryReader.ReadString();
+                                            float value = binaryReader.ReadSingle();
+                                            if (!pmatlist.ContainsKey(key))
+                                            {
+                                                pmatlist.Add(key, new KeyValuePair<string, float>(key2, value));
+                                            }
+                                            else
+                                            {
+                                                Debug.Log($"Skipping {text}  because its target material has already been changed by another Mod .pmat  ");
+                                            }
+                                        }
+                                        else
+                                        {
+
+                                            Debug.Log("ヘッダーエラー\n" + text + "File header of Mod .pmat file is invalid! skipping it!");
+
+                                        }
+                                    }
+                                }
+                                else
+                                {
+
+                                    Debug.Log(text + "を開けませんでした ( Mod .pmat file is invalid! skipping it)");
+                                }
+                                
+                            }
+                        }
+                    }
+                }
+
+
+                if (gamepmat != null && 0 < gamepmat.Length)
+                {
+                    for (int i = 0; i < gamepmat.Length; i++)
+                    {
+                        if (Path.GetExtension(gamepmat[i]) == ".pmat")
+                        {
+                            string text = gamepmat[i];
                             using (AFileBase aFileBase = GameUty.FileOpen(text, null))
                             {
                                 if (aFileBase.IsValid())
@@ -270,42 +321,33 @@ namespace COM3D2.ModLoader.Managed
                                             int key = binaryReader.ReadInt32();
                                             string key2 = binaryReader.ReadString();
                                             float value = binaryReader.ReadSingle();
-                                            if (!ImportCM.m_hashPriorityMaterials.ContainsKey(key))
+                                            if (!pmatlist.ContainsKey(key))
                                             {
-                                                ImportCM.m_hashPriorityMaterials.Add(key, new KeyValuePair<string, float>(key2, value));
+                                                pmatlist.Add(key, new KeyValuePair<string, float>(key2, value));
                                             }
-                                            else if (i < modpmat.Length)
-                                            {
-                                                Debug.Log($"Skipping {text}  because its target material has already been changed by another Mod .pmat  ");
-                                            }
+                                            
                                         }
                                         else
-                                        { if (i < modpmat.Length)
-                                            {
-                                                Debug.Log("ヘッダーエラー\n" + text + "File header of Mod .pmat file is invalid! skipping it!");
-                                            }
-                                            else
+                                        {
+                                            
                                             { Debug.Log("ヘッダーエラー\n" + text + "File header of official .pmat file is invalid! skipping it!"); }
                                         }
                                     }
                                 }
                                 else
                                 {
-                                    if (i < modpmat.Length)
-                                    {
-                                        Debug.Log(text + "を開けませんでした ( Mod .pmat file is invalid! skipping it)");
-                                    }
-                                    else
+                                 
                                     { Debug.Log(text + "を開けませんでした ( Official .pmat file is invalid! skipping it)"); }
                                 }
-
-                            }
                             }
                         }
                     }
                 }
+
+                m_hashPriorityMaterials.SetValue(null, pmatlist);
             }
         }
+    }
            
 
 }
