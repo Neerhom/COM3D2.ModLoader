@@ -24,8 +24,11 @@ namespace COM3D2.ModLoader.Patcher
             string hookDir = $"{HOOK_NAME}.dll";
             AssemblyDefinition hookAssembly = AssemblyLoader.LoadAssembly(Path.Combine(assemblyDir, hookDir));
 
-            TypeDefinition gameUty = assembly.MainModule.GetType("GameUty");
             TypeDefinition hooks = hookAssembly.MainModule.GetType($"{HOOK_NAME}.Hooks");
+            TypeDefinition Prefab_manager = hookAssembly.MainModule.GetType($"{HOOK_NAME}.Prefab_manager");
+
+            TypeDefinition gameUty = assembly.MainModule.GetType("GameUty");
+            
 
             MethodDefinition init = gameUty.GetMethod("Init");
             MethodDefinition swapFileSystems = hooks.GetMethod("SwapFileSystems");
@@ -86,54 +89,8 @@ namespace COM3D2.ModLoader.Patcher
            
 
 
-            // enable PhotoBGObj to use asset bundles when
-            // this is somwhat obsolete but it is here in order to keep compatibility with older nei files
-
-            MethodDefinition PhotBGObj_Instantiate = PhotoBGObjectData.GetMethod("Instantiate");
-            MethodDefinition PhotBGObj_Instantiate_Ext = hooks.GetMethod("PhotBGObj_Instantiate_Ext");
-
-            for (int inst = 0; inst < PhotBGObj_Instantiate.Body.Instructions.Count; inst++)
-            {
-                if (PhotBGObj_Instantiate.Body.Instructions[inst].OpCode == OpCodes.Ldstr && (string)PhotBGObj_Instantiate.Body.Instructions[inst].Operand == "Prefab/")
-                {
-                    
-                        for (int j = 0; j < PhotBGObj_Instantiate.Body.Variables.Count; j++)
-
-                        {
-                            
-
-                            if (PhotBGObj_Instantiate.Body.Variables[j].VariableType.FullName == "UnityEngine.Object") // get index of local variable of UnityEngine.Object type
-                            {
-                                PhotBGObj_Instantiate.InjectWith(PhotBGObj_Instantiate_Ext, codeOffset: inst + 6, flags: InjectFlags.PassInvokingInstance | InjectFlags.PassLocals, localsID: new[] { j });
-
-                                break;
-                            }
-                        }
-
-                        break;
-                    
-                }
-            }
-            //add mod asset bundles to BgFiles
-       
-            MethodDefinition addbundlestobg = hooks.GetMethod("addbundlestobg");
-         
-          for (int inst =0; inst < init.Body.Instructions.Count; inst++)
-          {
-                if (init.Body.Instructions[inst].OpCode == OpCodes.Call)
-                {
-                    MethodReference target = init.Body.Instructions[inst].Operand as MethodReference;
-
-                    if (target.Name == "UpdateFileSystemPath")
-                    {
-                  
-                        
-                            init.InjectWith(addbundlestobg, codeOffset: inst + 1);
-                            break;
-                        
-                    }
-              }
-          }
+        
+     
 
 
             // nei apped PhotoMotionData
@@ -157,10 +114,81 @@ namespace COM3D2.ModLoader.Patcher
 
             // patch in PmatHandler for loading of mod pmat files, override of base .pmat files and handling of pmat hash conflicts
 
-            TypeDefinition ImportCM = assembly.MainModule.GetType("ImportCM");
+           TypeDefinition ImportCM = assembly.MainModule.GetType("ImportCM");
+               
+          MethodDefinition ReadMaterial = ImportCM.GetMethod("ReadMaterial");
+          ReadMaterial.InjectWith(hooks.GetMethod("PmatHandler"));
+
+            //add mod asset bundles to BgFiles
+
            
-            MethodDefinition ReadMaterial = ImportCM.GetMethod("ReadMaterial");
-            ReadMaterial.InjectWith(hooks.GetMethod("PmatHandler"));
+
+            MethodDefinition addbundlestobg = Prefab_manager.GetMethod("Addbundlestobg");
+
+            for (int inst = 0; inst < init.Body.Instructions.Count; inst++)
+            {
+                if (init.Body.Instructions[inst].OpCode == OpCodes.Call)
+                {
+                    MethodReference target = init.Body.Instructions[inst].Operand as MethodReference;
+
+                    if (target.Name == "UpdateFileSystemPath")
+                    {
+
+
+                        init.InjectWith(addbundlestobg, codeOffset: inst + 1);
+                        break;
+
+                    }
+                }
+            }
+
+
+            // enable  override of PhotoBGObj prefabs
+            
+
+            MethodDefinition PhotBGObj_Instantiate = PhotoBGObjectData.GetMethod("Instantiate");
+            MethodDefinition PhotBGObj_Instantiate_Ext = Prefab_manager.GetMethod("PhotBGObj_Instantiate_Ext");
+
+            for (int inst = 0; inst < PhotBGObj_Instantiate.Body.Instructions.Count; inst++)
+            {
+                if (PhotBGObj_Instantiate.Body.Instructions[inst].OpCode == OpCodes.Ldstr && (string)PhotBGObj_Instantiate.Body.Instructions[inst].Operand == "Prefab/")
+                {
+
+                    for (int j = 0; j < PhotBGObj_Instantiate.Body.Variables.Count; j++)
+
+                    {
+
+
+                        if (PhotBGObj_Instantiate.Body.Variables[j].VariableType.FullName == "UnityEngine.Object") // get index of local variable of UnityEngine.Object type
+                        {
+                            PhotBGObj_Instantiate.InjectWith(PhotBGObj_Instantiate_Ext, codeOffset: inst + 6, flags: InjectFlags.PassInvokingInstance | InjectFlags.PassLocals, localsID: new[] { j });
+
+                            break;
+                        }
+                    }
+
+                    break;
+
+                }
+            }
+
+            // the following two methods look like they're shouldn't bechanged in the future, so i should be fine with hardcoding code offset
+            // and there shouldn't be need in calculating index of target @object local
+
+            // create prefab override in Maid.AddPrefab which is for character prefabs such as cum particles
+            MethodDefinition Maid_AddPrefab = assembly.MainModule.GetType("Maid").GetMethod("AddPrefab");
+            MethodDefinition Maid_prefab_override = Prefab_manager.GetMethod("Maid_prefab_override");
+
+            Maid_AddPrefab.InjectWith(Maid_prefab_override, 5, flags: InjectFlags.PassParametersVal | InjectFlags.PassLocals, localsID: new[] { 0 });
+
+            // create prefab override in  BgMgr.AddPrefabToBg which is for background prefabs loaded
+            // via scripts, such as dildobox
+
+            MethodDefinition BgMgr_AddprefabToBg = assembly.MainModule.GetType("BgMgr").GetMethod("AddPrefabToBg");
+            MethodDefinition BgMgr_prefab_override = Prefab_manager.GetMethod("BgMgr_prefab_override");
+            BgMgr_AddprefabToBg.InjectWith(BgMgr_prefab_override,13, flags: InjectFlags.PassParametersVal | InjectFlags.PassLocals, localsID: new[] { 1 });
         }
+
+
     }
 }
