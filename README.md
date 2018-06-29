@@ -13,6 +13,8 @@ While ModLoader is capable of loading .ks files from Mod folder (added in ver 1.
 
 The patcher also gives priority to the files loaded from Mod folder over those loaded from .arc files, meaning if two files have the same name the one from Mod will be loaded.
 
+Since version 1.6.2 ModLoader enables use of .asset_bg files to override game's prefabs, namely: Photo Mode background objects, background objects called via game's script files and character prefabs (particle effects, such as cum, you see during sex). Same method can also be applied to override in-game backgrounds, though this was possible for a while ever since loading of .asset_bg files, because game was coded so...
+
 Folder structure inside Mod folder is irrelevant, so as long it's inside Mod it's going to work. 
 
 ModLoader also enables loading of Unity 5.6.4 Asset Bundles as Backgrounds and Background objects for Photo mode, assuming their files extension was changed to .asset_bg.
@@ -35,13 +37,18 @@ A patcher that improves game startup times, by improving upond KISS' way of load
 
 The patcher also improves startup times (and even in-game load times, in few cases) by improving upon GetFileListAtExtension() method of both filesystem types, which make this patcher to be more than the name suggest, but since this functionality was added post-release, the name was kept as to simplify upgrade for the usesr. Credit for this bit of functionality goes to  はてな (twitter @hatena_37)
 
-Pre-requisites:
- [Sybaris 2.1](https://ux.getuploader.com/cm3d2_j/download/68) or UnityDoorStop [SybarisLoader](https://github.com/NeighTools/SybarisLoader)
+# Pre-requisites
+ModLoader requires any plugin/patcher loader that is capable of loading Sybaris patchers. 
+For COM3D2 following are known:
 
-While [Sybaris 2.2](https://ux.getuploader.com/cm3d2_j/download/154) is also a possible option, the functionality is not confirmed nor it will be as I'm not fan of it.
+[Sybaris 2.1](https://ux.getuploader.com/cm3d2_j/download/68)
+
+[BepinEX 4.0 or newer] (https://github.com/BepInEx/BepInEx) (personal recommendation, yes I'm biased towards it)
+
+[Sybaris 2.2](https://ux.getuploader.com/cm3d2_j/download/154) is also a possible option, the functionality is not confirmed nor it will be as I'm not fan of it.
 
 
-Installation:
+# Installation:
 
 Put contents of Sybaris into Sybaris folder
 
