@@ -24,21 +24,7 @@ namespace COM3D2.ModLoader.Managed
 
         }
 
-        // add all existing .asset_bg files from Mod to GameUty.BgFiles dictionary
-        public static void addbundlestobg()
-        {
-            string[] array = GameUty.m_ModFileSystem.GetFileListAtExtension(".asset_bg"); ;
-            for (int num9 = 0; num9 < array.Length; num9++)
-            {
-
-                string fileName = Path.GetFileName(array[num9]);
-
-                GameUty.BgFiles[fileName] = GameUty.m_ModFileSystem;
-
-            }
-        }
-
-
+      
 
 
         // add data from *phot_bg_list*.nei files to PhotoBGData.bg_data_
@@ -159,19 +145,7 @@ namespace COM3D2.ModLoader.Managed
 
 
 
-        //if game's base code fails to create GameObject from Resource files, then this method would load it from .asset_bg
-        // this allows use of .asset_bg files as Photo Mode Bacground objects
-        // this is no longer required, as game can now use .asset_bg files as photo bg object, but since those loaded from create_asset_bundle_name field
-        // removing this would mean loosing compatibility with older nei files.
-        public static void PhotBGObj_Instantiate_Ext(PhotoBGObjectData self, ref UnityEngine.Object @object)
-        {
-
-            if (@object == null)
-            {
-                @object = GameMain.Instance.BgMgr.CreateAssetBundle(self.create_prefab_name);
-            }
-
-        }
+        
 
 
         // add data from *phot_motion_list*.nei files to PhotoMotionData.motion_data_
