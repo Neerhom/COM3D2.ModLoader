@@ -37,7 +37,7 @@ namespace COM3D2.ModLoader.Managed
             {
                 bg_nelist = GameUty.FileSystemMod.GetList("PhotoBG_NEI", AFileSystemBase.ListType.AllFile);
             }
-            catch (Exception) { }
+            catch  { }
 
 
             if (bg_nelist != null && 0 < bg_nelist.Length)
@@ -66,9 +66,11 @@ namespace COM3D2.ModLoader.Managed
                                         photoBGData.category = csvParser.GetCellAsString(num2++, k);
                                         photoBGData.name = csvParser.GetCellAsString(num2++, k);
                                         photoBGData.create_prefab_name = csvParser.GetCellAsString(num2++, k);
-                                        //   string cellAsString = csvParser.GetCellAsString(num2++, k);
-                                        PhotoBGData.bg_data_.Add(photoBGData);
-
+                                        string check = csvParser.GetCellAsString(num2++, k);
+                                        if (String.IsNullOrEmpty(check) || GameUty.BgFiles.ContainsKey(photoBGData.create_prefab_name.ToLower() + ".asset_bg"))
+                                        {
+                                            PhotoBGData.bg_data_.Add(photoBGData);
+                                        }
                                     }
                                 }
                                 else
@@ -94,7 +96,7 @@ namespace COM3D2.ModLoader.Managed
             {
                 BgObj_list = GameUty.FileSystemMod.GetList("PhotoBG_OBJ_NEI", AFileSystemBase.ListType.AllFile);
             }
-            catch (Exception) { }
+            catch { }
 
             if (BgObj_list != null && 0 < BgObj_list.Length)
             {
@@ -116,8 +118,6 @@ namespace COM3D2.ModLoader.Managed
                                 {
                                     for (int i = 1; i < csvParser.max_cell_y; i++)
                                     {
-
-                                        {
                                             int num = 0;
                                             PhotoBGObjectData photoBGObjectData = new PhotoBGObjectData();
                                             photoBGObjectData.id = (long)csvParser.GetCellAsInteger(num++, i);
@@ -125,9 +125,14 @@ namespace COM3D2.ModLoader.Managed
                                             photoBGObjectData.name = csvParser.GetCellAsString(num++, i);
                                             photoBGObjectData.create_prefab_name = csvParser.GetCellAsString(num++, i);
                                             photoBGObjectData.create_asset_bundle_name = csvParser.GetCellAsString(num++, i);
+                                        string check = csvParser.GetCellAsString(num++, i);
+                                        if (String.IsNullOrEmpty(check) || GameUty.BgFiles.ContainsKey(photoBGObjectData.create_asset_bundle_name.ToLower() + ".asset_bg"))
+                                        {
                                             PhotoBGObjectData.bg_data_.Add(photoBGObjectData);
-
                                         }
+                                        
+                                            
+                                        
                                     }
                                 }
                                 else
