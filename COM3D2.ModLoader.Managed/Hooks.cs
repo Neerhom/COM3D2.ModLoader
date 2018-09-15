@@ -60,12 +60,21 @@ namespace COM3D2.ModLoader.Managed
 
                                     for (int k = 1; k < csvParser.max_cell_y; k++)
                                     {
-                                        int num2 = 0;
+                                        int num2 = 1;
                                         PhotoBGData photoBGData = new PhotoBGData();
-                                        photoBGData.id = csvParser.GetCellAsInteger(num2++, k).ToString();
+                                        photoBGData.id = "";
                                         photoBGData.category = csvParser.GetCellAsString(num2++, k);
                                         photoBGData.name = csvParser.GetCellAsString(num2++, k);
                                         photoBGData.create_prefab_name = csvParser.GetCellAsString(num2++, k);
+                                        //assign id from prefab/bundles string
+                                        //this is done because save/load of objects in photomode is based on id
+                                        if (!string.IsNullOrEmpty(photoBGData.create_prefab_name))
+                                        {
+                                            photoBGData.id = photoBGData.create_prefab_name.GetHashCode().ToString();
+                                            // this feels wrong, but i suspect the KISS might convert id to int at some point
+                                            // so i'd rather be on safe side
+                                        }
+                                        
                                         string check = csvParser.GetCellAsString(num2++, k);
                                         if (String.IsNullOrEmpty(check) || GameUty.BgFiles.ContainsKey(photoBGData.create_prefab_name.ToLower() + ".asset_bg"))
                                         {
@@ -118,13 +127,23 @@ namespace COM3D2.ModLoader.Managed
                                 {
                                     for (int i = 1; i < csvParser.max_cell_y; i++)
                                     {
-                                            int num = 0;
+                                            int num = 1;
                                             PhotoBGObjectData photoBGObjectData = new PhotoBGObjectData();
-                                            photoBGObjectData.id = (long)csvParser.GetCellAsInteger(num++, i);
+                                            photoBGObjectData.id = 0; // not sure if't necessary for id to actually have a value
                                             photoBGObjectData.category = csvParser.GetCellAsString(num++, i);
                                             photoBGObjectData.name = csvParser.GetCellAsString(num++, i);
                                             photoBGObjectData.create_prefab_name = csvParser.GetCellAsString(num++, i);
                                             photoBGObjectData.create_asset_bundle_name = csvParser.GetCellAsString(num++, i);
+                                        //assign id from rpefab/bundles string
+                                        //this is done because save/load of objects in photomode is based on id
+                                        if (!string.IsNullOrEmpty(photoBGObjectData.create_prefab_name))
+                                        {
+                                            photoBGObjectData.id = photoBGObjectData.create_prefab_name.GetHashCode();
+                                        }
+                                        else if (!string.IsNullOrEmpty(photoBGObjectData.create_asset_bundle_name))
+                                        {
+                                            photoBGObjectData.id = photoBGObjectData.create_asset_bundle_name.GetHashCode();
+                                        }
                                         string check = csvParser.GetCellAsString(num++, i);
                                         if (String.IsNullOrEmpty(check) || GameUty.BgFiles.ContainsKey(photoBGObjectData.create_asset_bundle_name.ToLower() + ".asset_bg"))
                                         {
