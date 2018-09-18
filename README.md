@@ -37,6 +37,10 @@ A patcher that improves game startup times, by improving upond KISS' way of load
 
 The patcher also improves startup times (and even in-game load times, in few cases) by improving upon GetFileListAtExtension() method of both filesystem types, which make this patcher to be more than the name suggest, but since this functionality was added post-release, the name was kept as to simplify upgrade for the usesr. Credit for this bit of functionality goes to  はてな (twitter @hatena_37)
 
+# COM3D2.AssetCleaner
+
+A ptacher that fixed bug in COM3D2 which coudl result in unecessary high VRAM and RAM usage due to game not unloading resources on switching BackGrounds. This was mainly an issue for Edit and Photo/Studio mode. Since it modifies BgMgr.ChangeBG() method this will also result in less VRAM&RAM usage when changing BG via plugins such SceneCapture and MultipleMaids
+
 # Pre-requisites
 ModLoader requires any plugin/patcher loader that is capable of loading Sybaris patchers. 
 For COM3D2 following are known:
