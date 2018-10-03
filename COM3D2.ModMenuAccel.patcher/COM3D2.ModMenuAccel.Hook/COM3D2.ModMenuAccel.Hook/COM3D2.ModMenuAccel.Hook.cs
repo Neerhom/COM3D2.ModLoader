@@ -37,7 +37,7 @@ namespace COM3D2.ModMenuAccel.Hook
                 GameUty.rid_menu_dic_ = new Dictionary<int, string>();
                 foreach (string str in GameUty.m_aryMenuFiles)
                 {
-                    Debug.Log("rid stuff is happening");                 
+                                
                     int hashCode = str.GetHashCode();
                     
                     GameUty.rid_menu_dic_[hashCode] = str;
