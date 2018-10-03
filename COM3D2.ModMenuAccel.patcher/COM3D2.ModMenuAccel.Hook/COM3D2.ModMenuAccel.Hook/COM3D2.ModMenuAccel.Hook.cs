@@ -37,23 +37,24 @@ namespace COM3D2.ModMenuAccel.Hook
                 GameUty.rid_menu_dic_ = new Dictionary<int, string>();
                 foreach (string str in GameUty.m_aryMenuFiles)
                 {
-                                      
+                    Debug.Log("rid stuff is happening");                 
                     int hashCode = str.GetHashCode();
-                    if (!GameUty.rid_menu_dic_.ContainsKey(hashCode))
-                    {
-                        GameUty.rid_menu_dic_.Add(hashCode, str);
-                    }
-                    else
-                    {
-                        NDebug.Assert(str == GameUty.rid_menu_dic_[hashCode], string.Concat(new string[]
-                        {
-                    "[",
-                    str,
-                    "]と[",
-                    GameUty.rid_menu_dic_[hashCode],
-                    "]は同じハッシュキーです"
-                        }));
-                    }
+                    
+                    GameUty.rid_menu_dic_[hashCode] = str;
+                    
+                   
+                    
+                   // not sure what was the pont of this log
+                   // as it goes nowhere, so i decided to cut off
+                 //       NDebug.Assert(str == GameUty.rid_menu_dic_[hashCode], string.Concat(new string[]
+                 //       {
+                 //   "[",
+                 //   str,
+                 //   "]と[",
+                 //   GameUty.rid_menu_dic_[hashCode],
+                 //   "]は同じハッシュキーです"
+                 //       }));
+                    
                 }
             }
             return true;
