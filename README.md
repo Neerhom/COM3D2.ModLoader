@@ -26,7 +26,7 @@ You can also refer to this [wiki page](https://github.com/Neerhom/COM3D2.ModLoad
 Because of this feature, ModLoader also comes with WORKING mirror props for Photo Mode!
 Do note, that I have no claims over the scripts resposible for reflections, as it was a free asset from Unity store, which is no longer avaialbe. If you wish to use this script, simply decomplie the .dll files inside UnityInjector.
 
-With introduction for nei append to desk item data, ModloAder also comes with Extra Desk Items mod, which add few food items from Photomode, to be used in desk customization. And they're even sorted by categories!
+With introduction for nei append to desk item data, ModloAder also comes with Extra Desk Items mod, which adds few food items from Photomode, to be used in desk customization. And they're even sorted by categories!
 
 # Supporting patchers
 
