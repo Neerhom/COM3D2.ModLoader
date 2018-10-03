@@ -32,67 +32,63 @@ namespace COM3D2.ModLoader.Managed
         public static void PhotoBGext()
         {
 
-            string[] bg_nelist = new string[] { };
-            try
-            {
-                bg_nelist = GameUty.FileSystemMod.GetList("PhotoBG_NEI", AFileSystemBase.ListType.AllFile);
-            }
-            catch  { }
+            string[] bg_nelist = null;
+            bg_nelist = GameUty.FileSystemMod.GetList("PhotoBG_NEI", AFileSystemBase.ListType.AllFile);
+            
 
-
-            if (bg_nelist != null && 0 < bg_nelist.Length)
+            if (bg_nelist == null || 0 == bg_nelist.Length)
+            { return; }
+            foreach (string str in bg_nelist)
             {
-                for (int j = 0; j < bg_nelist.Length; j++)
+                string nei_filename = Path.GetFileName(str);
+
+                if (Path.GetExtension(nei_filename) == ".nei" && nei_filename != "phot_bg_list.nei")
                 {
-                    string nei_filename = Path.GetFileName(bg_nelist[j]);
 
-                    if (Path.GetExtension(nei_filename) == ".nei" && nei_filename != "phot_bg_list.nei")
+                    using (AFileBase aFileBase2 = GameUty.FileSystemMod.FileOpen(nei_filename))
                     {
-
-                        using (AFileBase aFileBase2 = GameUty.FileSystemMod.FileOpen(nei_filename))
+                        using (CsvParser csvParser = new CsvParser())
                         {
-                            using (CsvParser csvParser = new CsvParser())
+
+                            if (csvParser.Open(aFileBase2))
                             {
 
-                                if (csvParser.Open(aFileBase2))
+
+                                for (int k = 1; k < csvParser.max_cell_y; k++)
                                 {
-
-
-                                    for (int k = 1; k < csvParser.max_cell_y; k++)
+                                    int num2 = 1;
+                                    PhotoBGData photoBGData = new PhotoBGData();
+                                    photoBGData.id = "";
+                                    photoBGData.category = csvParser.GetCellAsString(num2++, k);
+                                    photoBGData.name = csvParser.GetCellAsString(num2++, k);
+                                    photoBGData.create_prefab_name = csvParser.GetCellAsString(num2++, k);
+                                    //assign id from prefab/bundles string
+                                    //this is done because save/load of objects in photomode is based on id
+                                    if (!string.IsNullOrEmpty(photoBGData.create_prefab_name))
                                     {
-                                        int num2 = 1;
-                                        PhotoBGData photoBGData = new PhotoBGData();
-                                        photoBGData.id = "";
-                                        photoBGData.category = csvParser.GetCellAsString(num2++, k);
-                                        photoBGData.name = csvParser.GetCellAsString(num2++, k);
-                                        photoBGData.create_prefab_name = csvParser.GetCellAsString(num2++, k);
-                                        //assign id from prefab/bundles string
-                                        //this is done because save/load of objects in photomode is based on id
-                                        if (!string.IsNullOrEmpty(photoBGData.create_prefab_name))
-                                        {
-                                            photoBGData.id = photoBGData.create_prefab_name.GetHashCode().ToString();
-                                            // this feels wrong, but i suspect the KISS might convert id to int at some point
-                                            // so i'd rather be on safe side
-                                        }
-                                        
-                                        string check = csvParser.GetCellAsString(num2++, k);
-                                        if (String.IsNullOrEmpty(check) || GameUty.BgFiles.ContainsKey(photoBGData.create_prefab_name.ToLower() + ".asset_bg"))
-                                        {
-                                            PhotoBGData.bg_data_.Add(photoBGData);
-                                        }
+                                        photoBGData.id = photoBGData.create_prefab_name.GetHashCode().ToString();
+                                        // this feels wrong, but i suspect the KISS might convert id to int at some point
+                                        // so i'd rather be on safe side
+                                    }
+
+                                    string check = csvParser.GetCellAsString(num2++, k);
+                                    if (String.IsNullOrEmpty(check) || GameUty.BgFiles.ContainsKey(photoBGData.create_prefab_name.ToLower() + ".asset_bg"))
+                                    {
+                                        PhotoBGData.bg_data_.Add(photoBGData);
                                     }
                                 }
-                                else
-                                {
-                                    Debug.Log($"Skipping invalid file: Mod/{bg_nelist[j]}");
-                                }
+                            }
+                            else
+                            {
+                                Debug.Log($"Skipping invalid file: Mod/{str}");
                             }
                         }
                     }
-
                 }
 
             }
+
+            
         }
 
         // add data from *phot_bg_object_list*.nei files to PhotoBGObjectData.bg_data_
@@ -100,71 +96,68 @@ namespace COM3D2.ModLoader.Managed
         {
 
 
-            string[] BgObj_list = new string[] { };
-            try
-            {
+            string[] BgObj_list = null;
+            
                 BgObj_list = GameUty.FileSystemMod.GetList("PhotoBG_OBJ_NEI", AFileSystemBase.ListType.AllFile);
-            }
-            catch { }
+           
 
-            if (BgObj_list != null && 0 < BgObj_list.Length)
+            if (BgObj_list == null || 0 == BgObj_list.Length)
+            { return; }
+
+
+            foreach (string str in BgObj_list)
             {
+                string nei_filename = Path.GetFileName(str);
+               
 
-
-                for (int j = 0; j < BgObj_list.Length; j++)
+                if (Path.GetExtension(nei_filename) == ".nei" && nei_filename != "phot_bg_object_list.nei")
                 {
-                    string nei_filename = Path.GetFileName(BgObj_list[j]);
 
-                    if (Path.GetExtension(nei_filename) == ".nei" && nei_filename != "phot_bg_object_list.nei")
+                    using (AFileBase aFileBase = GameUty.FileSystemMod.FileOpen(nei_filename))
                     {
-
-                        using (AFileBase aFileBase = GameUty.FileSystemMod.FileOpen(nei_filename))
+                        using (CsvParser csvParser = new CsvParser())
                         {
-                            using (CsvParser csvParser = new CsvParser())
+
+                            if (csvParser.Open(aFileBase))
                             {
-
-                                if (csvParser.Open(aFileBase))
+                                for (int i = 1; i < csvParser.max_cell_y; i++)
                                 {
-                                    for (int i = 1; i < csvParser.max_cell_y; i++)
+                                    int num = 1;
+                                    PhotoBGObjectData photoBGObjectData = new PhotoBGObjectData();
+                                    photoBGObjectData.id = 0; // not sure if't necessary for id to actually have a value
+                                    photoBGObjectData.category = csvParser.GetCellAsString(num++, i);
+                                    photoBGObjectData.name = csvParser.GetCellAsString(num++, i);
+                                    photoBGObjectData.create_prefab_name = csvParser.GetCellAsString(num++, i);
+                                    photoBGObjectData.create_asset_bundle_name = csvParser.GetCellAsString(num++, i);
+                                    //assign id from rpefab/bundles string
+                                    //this is done because save/load of objects in photomode is based on id
+                                    if (!string.IsNullOrEmpty(photoBGObjectData.create_prefab_name))
                                     {
-                                            int num = 1;
-                                            PhotoBGObjectData photoBGObjectData = new PhotoBGObjectData();
-                                            photoBGObjectData.id = 0; // not sure if't necessary for id to actually have a value
-                                            photoBGObjectData.category = csvParser.GetCellAsString(num++, i);
-                                            photoBGObjectData.name = csvParser.GetCellAsString(num++, i);
-                                            photoBGObjectData.create_prefab_name = csvParser.GetCellAsString(num++, i);
-                                            photoBGObjectData.create_asset_bundle_name = csvParser.GetCellAsString(num++, i);
-                                        //assign id from rpefab/bundles string
-                                        //this is done because save/load of objects in photomode is based on id
-                                        if (!string.IsNullOrEmpty(photoBGObjectData.create_prefab_name))
-                                        {
-                                            photoBGObjectData.id = photoBGObjectData.create_prefab_name.GetHashCode();
-                                        }
-                                        else if (!string.IsNullOrEmpty(photoBGObjectData.create_asset_bundle_name))
-                                        {
-                                            photoBGObjectData.id = photoBGObjectData.create_asset_bundle_name.GetHashCode();
-                                        }
-                                        string check = csvParser.GetCellAsString(num++, i);
-                                        if (String.IsNullOrEmpty(check) || GameUty.BgFiles.ContainsKey(photoBGObjectData.create_asset_bundle_name.ToLower() + ".asset_bg"))
-                                        {
-                                            PhotoBGObjectData.bg_data_.Add(photoBGObjectData);
-                                        }
-                                        
-                                            
-                                        
+                                        photoBGObjectData.id = photoBGObjectData.create_prefab_name.GetHashCode();
                                     }
-                                }
-                                else
-                                {
-                                    Debug.Log($"Skipping invalid file: Mod/{BgObj_list[j]}");
+                                    else if (!string.IsNullOrEmpty(photoBGObjectData.create_asset_bundle_name))
+                                    {
+                                        photoBGObjectData.id = photoBGObjectData.create_asset_bundle_name.GetHashCode();
+                                    }
+                                    string check = csvParser.GetCellAsString(num++, i);
+                                    if (String.IsNullOrEmpty(check) || GameUty.BgFiles.ContainsKey(photoBGObjectData.create_asset_bundle_name.ToLower() + ".asset_bg"))
+                                    {
+                                        PhotoBGObjectData.bg_data_.Add(photoBGObjectData);
+                                    }
 
                                 }
+                            }
+                            else
+                            {
+                                Debug.Log($"Skipping invalid file: Mod/{str}");
 
                             }
+
                         }
                     }
                 }
             }
+            
         }
 
 
@@ -176,59 +169,146 @@ namespace COM3D2.ModLoader.Managed
         public static void PhotMotExt()
         {
 
-            string[] PhotoMotNei = new string[] { };
+            string[] PhotoMotNei = null;
 
-            try
+            PhotoMotNei = GameUty.FileSystemMod.GetList("PhotMot_NEI", AFileSystemBase.ListType.AllFile);
+            
+            
+         //   if (PhotoMotNei == null || PhotoMotNei.Length == 0)
+         //   { return; }
+
+            foreach (string str in PhotoMotNei)
             {
-                PhotoMotNei = GameUty.FileSystemMod.GetList("PhotMot_NEI", AFileSystemBase.ListType.AllFile);
-            }
-            catch (Exception) { }
-            if (PhotoMotNei != null && PhotoMotNei.Length > 0)
-            {
-                for (int j = 0; j < PhotoMotNei.Length; j++)
+                string nei_filename = Path.GetFileName(str);
+
+                if (Path.GetExtension(nei_filename) == ".nei" && nei_filename != "phot_motion_list.nei")
                 {
-                    string nei_filename = Path.GetFileName(PhotoMotNei[j]);
-
-                    if (Path.GetExtension(nei_filename) == ".nei" && nei_filename != "phot_motion_list.nei")
+                    using (AFileBase aFileBase = GameUty.FileSystem.FileOpen(nei_filename))
                     {
-                        using (AFileBase aFileBase = GameUty.FileSystem.FileOpen(nei_filename))
+                        using (CsvParser csvParser = new CsvParser())
                         {
-                            using (CsvParser csvParser = new CsvParser())
+                            if (csvParser.Open(aFileBase))
                             {
-                                if (csvParser.Open(aFileBase))
+                                for (int i = 1; i < csvParser.max_cell_y; i++)
                                 {
-                                    for (int i = 1; i < csvParser.max_cell_y; i++)
-                                    {
 
-                                        int num = 0;
-                                        PhotoMotionData photoMotionData = new PhotoMotionData();
-                                        photoMotionData.id = (long)csvParser.GetCellAsInteger(num++, i);
-                                        photoMotionData.category = csvParser.GetCellAsString(num++, i);
-                                        photoMotionData.name = csvParser.GetCellAsString(num++, i);
-                                        photoMotionData.direct_file = csvParser.GetCellAsString(num++, i);
-                                        photoMotionData.is_loop = (csvParser.GetCellAsString(num++, i) == "○");
-                                        photoMotionData.call_script_fil = csvParser.GetCellAsString(num++, i);
-                                        photoMotionData.call_script_label = csvParser.GetCellAsString(num++, i);
-                                        photoMotionData.is_mod = false;
-                                        string cellAsString = csvParser.GetCellAsString(num++, i);
-                                        bool flag = csvParser.GetCellAsString(num++, i) == "○";
-                                        photoMotionData.use_animekey_mune_l = (photoMotionData.use_animekey_mune_r = flag);
-                                        photoMotionData.is_man_pose = (csvParser.GetCellAsString(num++, i) == "○");
-                                        PhotoMotionData.motion_data_.Add(photoMotionData);
+                                    int num = 0;
+                                    PhotoMotionData photoMotionData = new PhotoMotionData();
+                                    photoMotionData.id = (long)csvParser.GetCellAsInteger(num++, i);
+                                    photoMotionData.category = csvParser.GetCellAsString(num++, i);
+                                    photoMotionData.name = csvParser.GetCellAsString(num++, i);
+                                    photoMotionData.direct_file = csvParser.GetCellAsString(num++, i);
+                                    photoMotionData.is_loop = (csvParser.GetCellAsString(num++, i) == "○");
+                                    photoMotionData.call_script_fil = csvParser.GetCellAsString(num++, i);
+                                    photoMotionData.call_script_label = csvParser.GetCellAsString(num++, i);
+                                    photoMotionData.is_mod = false;
+                                    string cellAsString = csvParser.GetCellAsString(num++, i);
+                                    bool flag = csvParser.GetCellAsString(num++, i) == "○";
+                                    photoMotionData.use_animekey_mune_l = (photoMotionData.use_animekey_mune_r = flag);
+                                    photoMotionData.is_man_pose = (csvParser.GetCellAsString(num++, i) == "○");
+                                    PhotoMotionData.motion_data_.Add(photoMotionData);
 
-
-                                    }
                                 }
-                                else
-                                { Debug.Log($"Skipping invalid file: Mod/{PhotoMotNei[j]}"); }
+                            }
+                            else
+                            { Debug.Log($"Skipping invalid file: Mod/{str}"); }
 
 
+                        }
+                    }
+                }
+
+            }
+            
+        }
+
+
+        // add data to desk_item_detail.nei and desk_item_category.nei 
+        public static void DeskData_Ext ()
+        {
+#if DEBUG
+            Console.WriteLine("Console.Writeline says hi");
+            Debug.Log("Debug.Log says hi"); 
+#endif
+
+            string[] DeskItemList = null;
+             DeskItemList = GameUty.FileSystemMod.GetList("DeskItem_NEI", AFileSystemBase.ListType.AllFile);
+            if (DeskItemList == null || DeskItemList.Length ==0)
+            { return; }
+
+            foreach (string str in  DeskItemList)
+            {
+                string neifile = Path.GetFileName(str);
+                string extension = Path.GetExtension(neifile);
+
+                // check if file is indeed a .nei file and it snot mennt to overwrite base files
+                // also check if the file is category type or detail type to determine the processing
+                // only files that contain category in their name are assumed to be category files all others nei files are assumbed to be detail files
+
+                if (neifile.Contains("category") && extension == ".nei" && neifile != "desk_item_category.nei")
+                {
+                    using (AFileBase afileBase = GameUty.FileSystem.FileOpen(neifile))
+                    {
+                        using (CsvParser csvParser = new CsvParser())
+                        {
+                            bool condition = csvParser.Open(afileBase);
+                            for (int k = 1; k < csvParser.max_cell_y; k++)
+                            {
+                                if (!csvParser.IsCellToExistData(0, k))
+                                {
+                                    break;
+                                }
+                                int cellAsInteger = csvParser.GetCellAsInteger(0, k);
+                                string cellAsString = csvParser.GetCellAsString(1, k);
+                                if (!DeskManager.item_category_data_dic_.ContainsKey(cellAsInteger))
+                                {
+                                    DeskManager.item_category_data_dic_.Add(cellAsInteger, cellAsString);
+                                }
                             }
                         }
                     }
+                }
+                else if (neifile != "desk_item_detail.nei" && extension == ".nei")
+                {
+                    using (AFileBase afileBase = GameUty.FileSystem.FileOpen(neifile))
+                    {
+                        using (CsvParser csvParser = new CsvParser())
+                        {
+
+                            if (csvParser.Open(afileBase))
+                            {
+                                for (int j = 1; j < csvParser.max_cell_y; j++)
+                                {
+                                    if (csvParser.IsCellToExistData(0, j))
+                                    {
+                                        int cellAsInteger2 = csvParser.GetCellAsInteger(0, j);
+                                        DeskManager.ItemData itemData = new DeskManager.ItemData(csvParser, j);
 
 
+                                        // check if it's a prefab data and add it if it is
+                                        // is impossible to check if prefab exists in resources files
+                                        // so if referenced prefab doesn't exist i ngame files, the entry isn't going to work properly in game
+                                        if (!string.IsNullOrEmpty(itemData.prefab_name))
+                                        {
+                                            itemData.id = itemData.prefab_name.GetHashCode();// override the id from file with hash of prefab string to minimize id conflicts
+                                            DeskManager.item_detail_data_dic_.Add(itemData.id, itemData);
+                                        }
 
+                                        // check if entry refers to asset bundle, and if it is, check if it exists before addding the data
+                                        else if (!string.IsNullOrEmpty(itemData.asset_name) && GameUty.BgFiles.ContainsKey(itemData.asset_name + ".asset_bg"))
+                                        {
+                                            itemData.id = itemData.asset_name.GetHashCode();
+                                            DeskManager.item_detail_data_dic_.Add(itemData.id, itemData);
+
+                                        }
+
+                                    }
+                                }
+                            }
+                            else
+                            { Debug.Log($"Skipping invalid file: Mod/{str}"); }
+                        }
+                    }
                 }
             }
         }
