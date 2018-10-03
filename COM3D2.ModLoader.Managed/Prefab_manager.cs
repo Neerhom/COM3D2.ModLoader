@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,8 +27,8 @@ namespace COM3D2.ModLoader.Managed
         // override Object loaded from resources with Object created from asset bundle if bundle with same name exists
         public static void PhotBGObj_Instantiate_Ext(PhotoBGObjectData self, ref UnityEngine.Object @object)
         {
-            string name = Path.GetFileName(self.create_prefab_name);
-            if ((GameUty.FileSystemMod.IsExistentFile(name + ".asset_bg")))
+            string name = Path.GetFileName(self.create_prefab_name.ToLower());
+            if ((GameUty.BgFiles.ContainsKey(name + ".asset_bg")))
             { @object = GameMain.Instance.BgMgr.CreateAssetBundle(name); }
 
         }
@@ -36,8 +36,8 @@ namespace COM3D2.ModLoader.Managed
         // create prefab override in Maid.AddPrefab which is for character prefabs such as cum particles
         public static void  Maid_prefab_override (ref UnityEngine.Object @object, string f_strPrefab, string f_strName, string f_strDestBone, Vector3 f_vOffsetLocalPos, Vector3 f_vOffsetLocalRot)
         {
-            string name = Path.GetFileName(f_strPrefab);
-            if ((GameUty.FileSystemMod.IsExistentFile(name + ".asset_bg")))
+            string name = Path.GetFileName(f_strPrefab.ToLower());
+            if ((GameUty.BgFiles.ContainsKey(name + ".asset_bg")))
             { @object = GameMain.Instance.BgMgr.CreateAssetBundle(name); }
         }
 
@@ -45,11 +45,21 @@ namespace COM3D2.ModLoader.Managed
         // via scripts, such as dildobox
         public static void BgMgr_prefab_override(ref UnityEngine.Object @object, string f_strSrc, string f_strName, string f_strDest, Vector3 f_vPos, Vector3 f_vRot)
         {
-            string name = Path.GetFileName(f_strSrc);
-            if ((GameUty.FileSystemMod.IsExistentFile(name + ".asset_bg")))
+            string name = Path.GetFileName(f_strSrc.ToLower());
+            if ((GameUty.BgFiles.ContainsKey(name + ".asset_bg")))
             { @object = GameMain.Instance.BgMgr.CreateAssetBundle(name); }
         }
 
+        // create prefab override in desk manager
+        // this bit of functionality is unlikely to be used, but it's mostly for feature-completion
 
+        public static void DeskManger_OnchangeBg_EXT(ref DeskManager.InstansData instansData, ref GameObject gameObject)
+        {
+            string name = Path.GetFileName(instansData.item_data.prefab_name.ToLower());
+
+            if ((GameUty.BgFiles.ContainsKey(name + ".asset_bg")))
+            { gameObject = GameMain.Instance.BgMgr.CreateAssetBundle(name); }
+
+        }
     }
 }
