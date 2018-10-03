@@ -7,6 +7,7 @@ using Mono.Cecil;
 using Mono.Cecil.Inject;
 using Mono.Cecil.Cil;
 using UnityEngine;
+using System.Linq;
 
 namespace COM3D2.ModLoader.Patcher
 {
@@ -103,7 +104,7 @@ namespace COM3D2.ModLoader.Patcher
             {
                 if (PhotoMotionDataCreate.Body.Instructions[inst].OpCode == OpCodes.Stfld)
                 {
-                    FieldReference target = PhotoMotionDataCreate.Body.Instructions[inst].Operand as FieldReference;
+                    FieldDefinition target = PhotoMotionDataCreate.Body.Instructions[inst].Operand as FieldDefinition;
                     if (target.Name == "CheckModFile")
                     {
                         PhotoMotionDataCreate.InjectWith(PhotMotExt, inst-2);
@@ -111,10 +112,37 @@ namespace COM3D2.ModLoader.Patcher
                     }
                 }
             }
+            // nei appen to deskmanager data
+
+            TypeDefinition Deskmanager = assembly.MainModule.GetType("DeskManager");
+            MethodDefinition Deskmanager_CreateCsvData = Deskmanager.GetMethod("CreateCsvData");
+            MethodDefinition DeskData_Ext = hooks.GetMethod("DeskData_Ext");
+            TypeDefinition Deskmanager_Itemdata = Deskmanager.NestedTypes.First(t => t.Name == "ItemData");
+            Deskmanager_Itemdata.ChangeAccess("id", true,false, true);//
+            Deskmanager.ChangeAccess("item_detail_data_dic_", true); // make public to allow hook access
+            Deskmanager.ChangeAccess("item_category_data_dic_", true);//
+            Deskmanager.IsPublic = true;//
+
+            for (int i = 0; Deskmanager_CreateCsvData.Body.Instructions.Count > i; i++)
+            {
+                if (Deskmanager_CreateCsvData.Body.Instructions[i].OpCode == OpCodes.Ldsfld)
+                {
+                    FieldDefinition target = Deskmanager_CreateCsvData.Body.Instructions[i].Operand as FieldDefinition;
+
+                    if (target.Name == "item_inst_data_")
+                    {
+                        Deskmanager_CreateCsvData.InjectWith(DeskData_Ext, i);
+                        break;
+                    }
+                }
+
+            }
+
+
 
             // patch in PmatHandler for loading of mod pmat files, override of base .pmat files and handling of pmat hash conflicts
 
-           TypeDefinition ImportCM = assembly.MainModule.GetType("ImportCM");
+            TypeDefinition ImportCM = assembly.MainModule.GetType("ImportCM");
                
           MethodDefinition ReadMaterial = ImportCM.GetMethod("ReadMaterial");
           ReadMaterial.InjectWith(hooks.GetMethod("PmatHandler"));
@@ -187,6 +215,33 @@ namespace COM3D2.ModLoader.Patcher
             MethodDefinition BgMgr_AddprefabToBg = assembly.MainModule.GetType("BgMgr").GetMethod("AddPrefabToBg");
             MethodDefinition BgMgr_prefab_override = Prefab_manager.GetMethod("BgMgr_prefab_override");
             BgMgr_AddprefabToBg.InjectWith(BgMgr_prefab_override,13, flags: InjectFlags.PassParametersVal | InjectFlags.PassLocals, localsID: new[] { 1 });
+
+            
+            // create prefab override in desk manager on change bg, to allow override of prefab used for desk items
+            // this bit of functionality is unlikely to be used, but it's mostly for feature-completion
+
+            
+            MethodDefinition Deskmanager_OnChangeBg = Deskmanager.GetMethod("OnChangeBG");
+            MethodDefinition DeskManger_OnchangeBg_EXT = Prefab_manager.GetMethod("DeskManger_OnchangeBg_EXT");
+
+            
+            for (int i = 0; Deskmanager_OnChangeBg.Body.Instructions.Count > i; i++)
+            {
+                if (Deskmanager_OnChangeBg.Body.Instructions[i].OpCode == OpCodes.Ldstr && (string)Deskmanager_OnChangeBg.Body.Instructions[i].Operand == "Prefab/")
+                {
+                    for (int j = 0; j < Deskmanager_OnChangeBg.Body.Variables.Count; j++)
+                    {
+                     
+                        if (Deskmanager_OnChangeBg.Body.Variables[j].VariableType.FullName == "DeskManager/InstansData")
+                        {
+                            Deskmanager_OnChangeBg.InjectWith(DeskManger_OnchangeBg_EXT, i + 8, flags: InjectFlags.PassLocals, localsID: new[] { j, j + 1 });
+                            break;
+                        }
+                    }
+                    break;
+                }
+                  
+            }
         }
 
 
