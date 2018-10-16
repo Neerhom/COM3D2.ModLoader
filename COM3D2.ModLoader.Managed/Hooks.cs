@@ -320,6 +320,7 @@ namespace COM3D2.ModLoader.Managed
                                             BindingFlags.Static | BindingFlags.NonPublic);
             var pmadt_dic_value = m_hashPriorityMaterials.GetValue(null);
             Dictionary<int, KeyValuePair<string, float>> pmatlist = new Dictionary<int, KeyValuePair<string, float>> ();
+            Dictionary<int, string> DupFilter = new Dictionary<int, string>();
             if (pmadt_dic_value == null)
             {
                 
@@ -332,8 +333,8 @@ namespace COM3D2.ModLoader.Managed
                     {
                         if (Path.GetExtension(modpmat[i]) == ".pmat")
                         {
-                            string text = modpmat[i];
-                            using (AFileBase aFileBase = GameUty.FileOpen(Path.GetFileName(text), null))
+                            string filename = Path.GetFileName(modpmat[i]);
+                            using (AFileBase aFileBase = GameUty.FileSystemMod.FileOpen(filename))
                             {
                                 if (aFileBase.IsValid())
                                 {
@@ -350,17 +351,18 @@ namespace COM3D2.ModLoader.Managed
                                             float value = binaryReader.ReadSingle();
                                             if (!pmatlist.ContainsKey(key))
                                             {
+                                                DupFilter.Add(key, filename);
                                                 pmatlist.Add(key, new KeyValuePair<string, float>(key2, value));
                                             }
                                             else
                                             {
-                                                Debug.Log($"Skipping {text}  because its target material has already been changed by another Mod .pmat  ");
+                                                Debug.LogWarning($"Skipping {filename}  because its target material has already been changed by {DupFilter[key]}  ");
                                             }
                                         }
                                         else
                                         {
 
-                                            Debug.Log("ヘッダーエラー\n" + text + "File header of Mod .pmat file is invalid! skipping it!");
+                                            Debug.Log("ヘッダーエラー\n" + filename + "File header of Mod .pmat file is invalid! skipping it!");
 
                                         }
                                     }
@@ -368,7 +370,7 @@ namespace COM3D2.ModLoader.Managed
                                 else
                                 {
 
-                                    Debug.Log(text + "を開けませんでした ( Mod .pmat file is invalid! skipping it)");
+                                    Debug.Log(filename + "を開けませんでした ( Mod .pmat file is invalid! skipping it)");
                                 }
                                 
                             }
@@ -384,7 +386,7 @@ namespace COM3D2.ModLoader.Managed
                         if (Path.GetExtension(gamepmat[i]) == ".pmat")
                         {
                             string text = gamepmat[i];
-                            using (AFileBase aFileBase = GameUty.FileOpen(text, null))
+                            using (AFileBase aFileBase = GameUty.FileSystem.FileOpen(text))
                             {
                                 if (aFileBase.IsValid())
                                 {
@@ -408,14 +410,14 @@ namespace COM3D2.ModLoader.Managed
                                         else
                                         {
                                             
-                                            { Debug.Log("ヘッダーエラー\n" + text + "File header of official .pmat file is invalid! skipping it!"); }
+                                            { Debug.Log("ヘッダーエラー\n" + text + "File header of official .pmat file or Mod override is invalid! skipping it!"); }
                                         }
                                     }
                                 }
                                 else
                                 {
                                  
-                                    { Debug.Log(text + "を開けませんでした ( Official .pmat file is invalid! skipping it)"); }
+                                    { Debug.Log(text + "を開けませんでした ( Official .pmat file or Mod override is invalid! skipping it)"); }
                                 }
                             }
                         }
