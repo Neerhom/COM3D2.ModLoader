@@ -33,14 +33,30 @@ namespace COM3D2.ModLoader.Patcher
 
             MethodDefinition init = gameUty.GetMethod("Init");
             MethodDefinition swapFileSystems = hooks.GetMethod("SwapFileSystems");
+            try
+            {
+                init.InjectWith(swapFileSystems, 2); // Patch right after the file system was initially set
+            }
+            catch (Exception e)
 
-            init.InjectWith(swapFileSystems, 2); // Patch right after the file system was initially set
+            {
+                Console.WriteLine("ModLoader:Failed to inject into method GameUty.Init");
+                Console.WriteLine(e);
+            }
+
             gameUty.ChangeAccess("m_FileSystem", true, false); // Make original file system public to allow replacing
             gameUty.ChangeAccess("m_ModFileSystem", true, false); // Make the mod file system public
 
             // hook in the ArcLoader to enable loading of ARCs and .ks files
-            init.InjectWith(hookAssembly.MainModule.GetType($"{HOOK_NAME}.ArcLoader").GetMethod("Install") ,-1);
-
+            try
+            {
+                init.InjectWith(hookAssembly.MainModule.GetType($"{HOOK_NAME}.ArcLoader").GetMethod("Install"), -1);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("ModLoader:Failed to inject into method GameUty.Init");
+                Console.WriteLine(e);
+            }
 
 
 
@@ -58,7 +74,15 @@ namespace COM3D2.ModLoader.Patcher
                     MethodReference target = PhotoBGDataCreate.Body.Instructions[inst].Operand as MethodReference;
                     if (target.Name == "GetSaveDataDic")
                     {
-                        PhotoBGDataCreate.InjectWith(PhotoBgExt, inst);
+                        try
+                        {
+                            PhotoBGDataCreate.InjectWith(PhotoBgExt, inst);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("ModLoader:Failed to inject into method PhotoBGData.Create");
+                            Console.WriteLine(e);
+                        }
                         break;
                     }
                 }
@@ -80,19 +104,22 @@ namespace COM3D2.ModLoader.Patcher
                     FieldDefinition target = PhotoBobjectDataCreate.Body.Instructions[inst].Operand as FieldDefinition;
                     if (target.Name == "category_list_")
                     {
-                        PhotoBobjectDataCreate.InjectWith(PhotoBGobjext, inst - 1);
-                         break;
+                        try
+                        {
+                            PhotoBobjectDataCreate.InjectWith(PhotoBGobjext, inst - 1);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("ModLoader:Failed to inject into method PhotoBGObjectData.Create");
+                            Console.WriteLine(e);
+                        }
+                        break;
                     }
 
                 }
             }
 
            
-
-
-        
-     
-
 
             // nei apped PhotoMotionData
             TypeDefinition PhotoMotionData = assembly.MainModule.GetType("PhotoMotionData");
@@ -107,7 +134,15 @@ namespace COM3D2.ModLoader.Patcher
                     FieldDefinition target = PhotoMotionDataCreate.Body.Instructions[inst].Operand as FieldDefinition;
                     if (target.Name == "CheckModFile")
                     {
-                        PhotoMotionDataCreate.InjectWith(PhotMotExt, inst-2);
+                        try
+                        {
+                            PhotoMotionDataCreate.InjectWith(PhotMotExt, inst - 2);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("ModLoader:Failed to inject into method PhotoMotionData.Create");
+                            Console.WriteLine(e); ;
+                        }
                         break;
                     }
                 }
@@ -131,25 +166,41 @@ namespace COM3D2.ModLoader.Patcher
 
                     if (target.Name == "item_inst_data_")
                     {
-                        Deskmanager_CreateCsvData.InjectWith(DeskData_Ext, i);
+                        try
+                        {
+                            Deskmanager_CreateCsvData.InjectWith(DeskData_Ext, i);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("ModLoader:Failed to inject into method DeskManager.CreateCsvData");
+                            Console.WriteLine(e); ;
+                        }
                         break;
                     }
                 }
 
             }
 
-
+            
 
             // patch in PmatHandler for loading of mod pmat files, override of base .pmat files and handling of pmat hash conflicts
 
             TypeDefinition ImportCM = assembly.MainModule.GetType("ImportCM");
                
           MethodDefinition ReadMaterial = ImportCM.GetMethod("ReadMaterial");
-          ReadMaterial.InjectWith(hooks.GetMethod("PmatHandler"));
+            try
+            {
+                ReadMaterial.InjectWith(hooks.GetMethod("PmatHandler"));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("ModLoader:Failed to inject into method ImportCM.ReadMaterial");
+                Console.WriteLine(e);
+            }
 
             //add mod asset bundles to BgFiles
 
-           
+
 
             MethodDefinition addbundlestobg = Prefab_manager.GetMethod("Addbundlestobg");
 
@@ -162,8 +213,15 @@ namespace COM3D2.ModLoader.Patcher
                     if (target.Name == "UpdateFileSystemPath")
                     {
 
-
-                        init.InjectWith(addbundlestobg, codeOffset: inst + 1);
+                        try
+                        {
+                            init.InjectWith(addbundlestobg, codeOffset: inst + 1);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("ModLoader:Failed to inject into method Gameuty.Init");
+                            Console.WriteLine(e);
+                        }
                         break;
 
                     }
@@ -189,8 +247,15 @@ namespace COM3D2.ModLoader.Patcher
 
                         if (PhotBGObj_Instantiate.Body.Variables[j].VariableType.FullName == "UnityEngine.Object") // get index of local variable of UnityEngine.Object type
                         {
-                            PhotBGObj_Instantiate.InjectWith(PhotBGObj_Instantiate_Ext, codeOffset: inst + 6, flags: InjectFlags.PassInvokingInstance | InjectFlags.PassLocals, localsID: new[] { j });
-
+                            try
+                            {
+                                PhotBGObj_Instantiate.InjectWith(PhotBGObj_Instantiate_Ext, codeOffset: inst + 6, flags: InjectFlags.PassInvokingInstance | InjectFlags.PassLocals, localsID: new[] { j });
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine("ModLoader:Failed to inject into method PhotoBGObj.Instantiate");
+                                Console.WriteLine(e);
+                            }
                             break;
                         }
                     }
@@ -206,21 +271,38 @@ namespace COM3D2.ModLoader.Patcher
             // create prefab override in Maid.AddPrefab which is for character prefabs such as cum particles
             MethodDefinition Maid_AddPrefab = assembly.MainModule.GetType("Maid").GetMethod("AddPrefab");
             MethodDefinition Maid_prefab_override = Prefab_manager.GetMethod("Maid_prefab_override");
-
-            Maid_AddPrefab.InjectWith(Maid_prefab_override, 5, flags: InjectFlags.PassParametersVal | InjectFlags.PassLocals, localsID: new[] { 0 });
-
+            try
+            {
+                Maid_AddPrefab.InjectWith(Maid_prefab_override, 5, flags: InjectFlags.PassParametersVal | InjectFlags.PassLocals, localsID: new[] { 0 });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("ModLoader:Failed to inject into method Maid.AddPrefab");
+                Console.WriteLine(e);
+            }
             // create prefab override in  BgMgr.AddPrefabToBg which is for background prefabs loaded
             // via scripts, such as dildobox
-
-            MethodDefinition BgMgr_AddprefabToBg = assembly.MainModule.GetType("BgMgr").GetMethod("AddPrefabToBg");
+            TypeDefinition BgMgr = assembly.MainModule.GetType("BgMgr");
+            BgMgr.ChangeAccess("m_dicAttachObj",true); // make public to allow hook access
+            MethodDefinition BgMgr_AddprefabToBg = BgMgr.GetMethod("AddPrefabToBg");
             MethodDefinition BgMgr_prefab_override = Prefab_manager.GetMethod("BgMgr_prefab_override");
-            BgMgr_AddprefabToBg.InjectWith(BgMgr_prefab_override,13, flags: InjectFlags.PassParametersVal | InjectFlags.PassLocals, localsID: new[] { 1 });
-
+            MethodReference BgMgr_prefab_override_ref= assembly.MainModule.Import(BgMgr_prefab_override);
             
+                        
+            for (int i = 0; i < BgMgr_AddprefabToBg.Body.Instructions.Count; i++)
+            {
+                if (BgMgr_AddprefabToBg.Body.Instructions[i].OpCode == OpCodes.Ldftn)
+                {
+                     BgMgr_AddprefabToBg.Body.Instructions[i].Operand = BgMgr_prefab_override_ref; // 1.28 change. replace new delegate with custom method
+                   
+                }
+            }
+
+    
             // create prefab override in desk manager on change bg, to allow override of prefab used for desk items
             // this bit of functionality is unlikely to be used, but it's mostly for feature-completion
 
-            
+
             MethodDefinition Deskmanager_OnChangeBg = Deskmanager.GetMethod("OnChangeBG");
             MethodDefinition DeskManger_OnchangeBg_EXT = Prefab_manager.GetMethod("DeskManger_OnchangeBg_EXT");
 
@@ -234,8 +316,17 @@ namespace COM3D2.ModLoader.Patcher
                      
                         if (Deskmanager_OnChangeBg.Body.Variables[j].VariableType.FullName == "DeskManager/InstansData")
                         {
-                            Deskmanager_OnChangeBg.InjectWith(DeskManger_OnchangeBg_EXT, i + 8, flags: InjectFlags.PassLocals, localsID: new[] { j, j + 1 });
+                            try
+                            {
+                                Deskmanager_OnChangeBg.InjectWith(DeskManger_OnchangeBg_EXT, i + 8, flags: InjectFlags.PassLocals, localsID: new[] { j, j + 1 });
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine("ModLoader:Failed to inject into method DEskmanager.OnChangeBG");
+                                Console.WriteLine(e);
+                            }
                             break;
+                                
                         }
                     }
                     break;
@@ -247,3 +338,4 @@ namespace COM3D2.ModLoader.Patcher
 
     }
 }
+
