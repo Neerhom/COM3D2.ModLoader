@@ -43,12 +43,28 @@ namespace COM3D2.ModLoader.Managed
 
         // create prefab override in  BgMgr.AddPrefabToBg which is for background prefabs loaded
         // via scripts, such as dildobox
-        public static void BgMgr_prefab_override(ref UnityEngine.Object @object, string f_strSrc, string f_strName, string f_strDest, Vector3 f_vPos, Vector3 f_vRot)
+       
+        public static UnityEngine.GameObject BgMgr_prefab_override(BgMgr self, string src, string name)
         {
-            string name = Path.GetFileName(f_strSrc.ToLower());
-            if ((GameUty.BgFiles.ContainsKey(name + ".asset_bg")))
-            { @object = GameMain.Instance.BgMgr.CreateAssetBundle(name); }
+            GameObject gameObject3 = null;
+            if (!self.m_dicAttachObj.TryGetValue(name, out gameObject3))
+            {
+                UnityEngine.Object @object = self.CreateAssetBundle(src);
+                if (@object == null)
+                {
+                    @object = Resources.Load("Prefab/" + src);
+                }
+                if (@object == null)
+                {
+                    return null;
+                }
+                gameObject3 = (UnityEngine.Object.Instantiate(@object) as GameObject);
+                gameObject3.name = name;
+                self.m_dicAttachObj.Add(name, gameObject3);
+            }
+            return gameObject3;
         }
+
 
         // create prefab override in desk manager
         // this bit of functionality is unlikely to be used, but it's mostly for feature-completion
