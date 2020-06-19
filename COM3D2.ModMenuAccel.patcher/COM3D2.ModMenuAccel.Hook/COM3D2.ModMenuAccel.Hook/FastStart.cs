@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,7 +48,11 @@ namespace COM3D2.ModMenuAccel.Hook
             // AddAutoPathForAllFolderの中身は見えないのでわからないが、使ってみたところ同じ結果を得られそうで、処理速度も大幅に速くなった
             // 現在は「Mod」フォルダのみAddFolderされているのでAddFolder後に処理を実行しているが、
             // もし今後「Mod」フォルダ以外にもAddFolderする場合があれば別の場所でまとめて実行したほうがいいと思われる
-            fileSystem.AddAutoPathForAllFolder();
+            fileSystem.AddAutoPathForAllFolder(true);
+            while (!fileSystem.IsFinishedAddAutoPathJob(true))
+            {
+            }
+            fileSystem.ReleaseAddAutoPathJob();
         }
 
         public static bool FileSystemWindowsAddAutoPath(out bool result) // inject at start; modify return
