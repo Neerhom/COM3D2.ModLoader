@@ -38,17 +38,27 @@ namespace COM3D2.ModMenuAccel
                 MethodDefinition Accel = ModmenuAccel.GetMethod("Accel");
 
 
-                for (int i = 0; i < UpdateFileSystemPath.Body.Instructions.Count; i++)
+                for (int i = UpdateFileSystemPath.Body.Instructions.Count - 1; i >0 ; i--)
                 {
-                    if (UpdateFileSystemPath.Body.Instructions[i].OpCode == OpCodes.Stsfld)
+                    //find code block that checks if m_ModFileSystem is null
+                    if (UpdateFileSystemPath.Body.Instructions[i].OpCode == OpCodes.Brfalse &&
+                        UpdateFileSystemPath.Body.Instructions[i - 1].OpCode == OpCodes.Ldsfld)
                     {
-                        FieldReference target = UpdateFileSystemPath.Body.Instructions[i].Operand as FieldReference;
-                        if (target.Name == "m_aryMenuFiles")
-                        {
-                            UpdateFileSystemPath.InjectWith(Accel, i + 1, flags: InjectFlags.ModifyReturn);
-                            break;
-                        }
+ 
+                        FieldReference target = UpdateFileSystemPath.Body.Instructions[i - 1].Operand as FieldReference;
+                            
+                        if (target.Name == "m_ModFileSystem")
 
+                            {
+                            //invert condition so game's code only runs if  m_ModFileSystem == null
+                            // this obviously will crash if it is null, but in that case there is no pont to this patcher
+                                UpdateFileSystemPath.Body.Instructions[i].OpCode = OpCodes.Brtrue;
+                                UpdateFileSystemPath.InjectWith(Accel, i - 1); 
+                                break;
+                            }
+
+
+                        
                     }
                 }
             }
