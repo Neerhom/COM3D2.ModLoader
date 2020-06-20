@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -57,7 +57,7 @@ namespace COM3D2.ModLoader.Managed
                                 for (int k = 1; k < csvParser.max_cell_y; k++)
                                 {
                                     int num2 = 1;
-                                    PhotoBGData photoBGData = new PhotoBGData();
+                                    PhotoBGData photoBGData = new PhotoBGData(); // this requires prepatched assembly to compile
                                     photoBGData.id = "";
                                     photoBGData.category = csvParser.GetCellAsString(num2++, k);
                                     photoBGData.name = csvParser.GetCellAsString(num2++, k);
@@ -123,7 +123,7 @@ namespace COM3D2.ModLoader.Managed
                                 for (int i = 1; i < csvParser.max_cell_y; i++)
                                 {
                                     int num = 1;
-                                    PhotoBGObjectData photoBGObjectData = new PhotoBGObjectData();
+                                    PhotoBGObjectData photoBGObjectData = new PhotoBGObjectData(); // this requires prepatched assembly to compile
                                     photoBGObjectData.id = 0; // not sure if't necessary for id to actually have a value
                                     photoBGObjectData.category = csvParser.GetCellAsString(num++, i);
                                     photoBGObjectData.name = csvParser.GetCellAsString(num++, i);
@@ -193,7 +193,7 @@ namespace COM3D2.ModLoader.Managed
                                 {
 
                                     int num = 0;
-                                    PhotoMotionData photoMotionData = new PhotoMotionData();
+                                    PhotoMotionData photoMotionData = new PhotoMotionData(); // this requires prepatched assembly to compile
                                     photoMotionData.id = (long)csvParser.GetCellAsInteger(num++, i);
                                     photoMotionData.category = csvParser.GetCellAsString(num++, i);
                                     photoMotionData.name = csvParser.GetCellAsString(num++, i);
@@ -427,7 +427,79 @@ namespace COM3D2.ModLoader.Managed
                 m_hashPriorityMaterials.SetValue(null, pmatlist);
             }
         }
+
+        public static bool ManMenuAdd_run = false;
+        public static void ManMenuAdd(PhotoManEditManager self) {
+
+            if (ManMenuAdd_run){ return; }
+            ManMenuAdd_run = true;
+
+            FieldInfo menu_file_name_list_ = typeof(PhotoManEditManager).GetField("menu_file_name_list_", BindingFlags.Static | BindingFlags.NonPublic);
+            HashSet<string> menu_filename_list_val =  (HashSet<string>)menu_file_name_list_.GetValue(null);
+            FieldInfo man_body_menu_list_self = self.GetType().GetField("man_body_menu_list_", BindingFlags.NonPublic | BindingFlags.Instance);
+            FieldInfo man_head_menu_list_self = self.GetType().GetField("man_head_menu_list_", BindingFlags.NonPublic | BindingFlags.Instance);
+
+
+            HashSet<string> menu_list = new HashSet<string>();
+            List<SceneEdit.SMenuItem> head_list = new List<SceneEdit.SMenuItem>();
+            List<SceneEdit.SMenuItem> body_list = new List<SceneEdit.SMenuItem>();
+            MPN body = (MPN)Enum.Parse(typeof(MPN), "body");
+            
+            foreach (string filename in GameUty.ModOnlysMenuFiles)
+            {
+                if (filename.Contains("mhead") || filename.Contains("mbody"))
+                {
+                    menu_list.Add(filename);
+                }
+                
+            }
+
+            Debug.Log($"menu list pre union{ menu_list}");
+            if (menu_filename_list_val != null)
+            {
+                menu_list.UnionWith(menu_filename_list_val);
+            }
+            Debug.Log($"menu list post union{ menu_list}");
+            foreach (string filename in menu_list)
+
+            {
+                SceneEdit.SMenuItem smenuItem = new SceneEdit.SMenuItem();
+                if (SceneEdit.GetMenuItemSetUP(smenuItem, filename, true))
+                {
+                    if (smenuItem.m_mpn == body)
+                    {
+                        body_list.Add(smenuItem);
+                    }
+                    else 
+                    {
+                        head_list.Add(smenuItem);
+                    }
+
+
+                }
+
+            }
+
+              
+            menu_file_name_list_.SetValue(null, menu_list);
+            man_body_menu_list_self.SetValue(self, body_list);
+            man_head_menu_list_self.SetValue(self, head_list);
+        }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     }
+
+
            
 
 }
