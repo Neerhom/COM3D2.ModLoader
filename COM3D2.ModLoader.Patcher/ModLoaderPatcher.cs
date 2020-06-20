@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -286,7 +286,7 @@ namespace COM3D2.ModLoader.Patcher
             BgMgr.ChangeAccess("m_dicAttachObj",true); // make public to allow hook access
             MethodDefinition BgMgr_AddprefabToBg = BgMgr.GetMethod("AddPrefabToBg");
             MethodDefinition BgMgr_prefab_override = Prefab_manager.GetMethod("BgMgr_prefab_override");
-            MethodReference BgMgr_prefab_override_ref= assembly.MainModule.Import(BgMgr_prefab_override);
+            MethodReference BgMgr_prefab_override_ref= assembly.MainModule.ImportReference(BgMgr_prefab_override);
             
                         
             for (int i = 0; i < BgMgr_AddprefabToBg.Body.Instructions.Count; i++)
@@ -333,6 +333,24 @@ namespace COM3D2.ModLoader.Patcher
                 }
                   
             }
+
+            //add man menu file to user edit and photomode
+            TypeDefinition PhotoManEditManager = assembly.MainModule.GetType("PhotoManEditManager");
+            MethodDefinition PhotoManEditManager_ctor = PhotoManEditManager.GetMethod(".ctor");
+            MethodDefinition ManMenuAdd = hooks.GetMethod("ManMenuAdd");
+
+            try
+            {
+                PhotoManEditManager_ctor.InjectWith(ManMenuAdd, -1, flags: InjectFlags.PassInvokingInstance);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("ModLoader:Failed to inject into method Deskmanager_OnChangeBg");
+                Console.WriteLine(e);
+                
+            }
+
+
         }
 
 
