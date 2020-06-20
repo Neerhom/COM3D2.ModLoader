@@ -1,7 +1,7 @@
 # COM3D2.ModLoader
 Sybaris patcher for GameData-like functionality.
 
-**Note. ModLoader version 1.4.2 and above, REQUIRE game version 1.11 or higher.**
+**Note. ModLoader version 1.7 and above, REQUIRE game version 1.48 or higher.**
 
 Since Sybaris 2.1 currently isn't able to load any mods via Sybaris/Gamedata folder, this patcher was made to fix that, by giving such functionality to Mod folder.
 
@@ -27,6 +27,10 @@ Because of this feature, ModLoader also comes with WORKING mirror props for Phot
 Do note, that I have no claims over the scripts resposible for reflections, as it was a free asset from Unity store, which is no longer avaialbe. If you wish to use this script, simply decomplie the .dll files inside UnityInjector.
 
 With introduction for nei append to desk item data, ModloAder also comes with Extra Desk Items mod, which adds few food items from Photomode, to be used in desk customization. And they're even sorted by categories!
+
+**Due to cahnges in game version 1.48, ModLoader 1.7.1 handles loading of master/man mods**
+
+A menu file that contains "mhead" or "mbody" in the filname is considered as master/man//player menu and will display it in master edit and photomode.
 
 # Supporting patchers
 
