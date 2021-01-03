@@ -30,9 +30,17 @@ namespace COM3D2.ModLoader.Managed
                     arcFile.Pointer = new WindowsFilePointer(file);
                 }
 
-                // Save the ARC file on disk because the game does not support loading ARC from meory easily
-                // the temp ARC is saved in ML_temp folder in game's folder, so as to not get in the way of general mods
-                if (!Directory.Exists(Path.Combine(gamepath, "ML_temp")))
+                foreach (string file in Directory.GetFiles(ModFolder, "*.ogg", SearchOption.AllDirectories))
+                {
+                    string name = Path.GetFileName(file);
+
+                    ArcFileEntry arcFile = !fs.FileExists(file) ? fs.CreateFile(name) : fs.GetFile(file);
+                    arcFile.Pointer = new WindowsFilePointer(file);
+                }
+
+            // Save the ARC file on disk because the game does not support loading ARC from meory easily
+            // the temp ARC is saved in ML_temp folder in game's folder, so as to not get in the way of general mods
+            if (!Directory.Exists(Path.Combine(gamepath, "ML_temp")))
                     Directory.CreateDirectory(Path.Combine(gamepath, "ML_temp"));
 
                 using (FileStream fStream = File.Create(Path.Combine(gamepath, "ML_temp\\ML_temp.arc")))
