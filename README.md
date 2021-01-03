@@ -9,7 +9,7 @@ This enables loading of any files that game would call from it's .arc files from
 
 The patcher also enable loading of custom .arc files from Mod folder, but it should be unecessary.
 
-While ModLoader is capable of loading .ks files from Mod folder (added in ver 1.5) the handling of those is a bit special and those curious can read about it on [wiki page](https://github.com/Neerhom/COM3D2.ModLoader/wiki/Tech-behind-.arc-and-.ks-loading)
+ModLoader is capable of loading **.ks** and **.ogg** files from Mod folder (.ks support added in ver 1.5; .ogg since 1.7.2). The handling of those is a bit special and those curious can read about it on [wiki page](https://github.com/Neerhom/COM3D2.ModLoader/wiki/Tech-behind-.arc-and-.ks-loading)
 
 The patcher also gives priority to the files loaded from Mod folder over those loaded from .arc files, meaning if two files have the same name the one from Mod will be loaded.
 
